@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:17:14
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:49:39
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -24,46 +24,31 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
  00000000			.data
 
- 00000000 FFFFFFFB		array	sdword	-5,3,9,-2,-6,6,7
-	   00000003
-	   00000009
-	   FFFFFFFE
-	   FFFFFFFA
-	   00000006
-	   00000007
- 0000001C 23 20 6F 66 20	str1	byte	"# of even numbers:",0
-	   65 76 65 6E 20
-	   6E 75 6D 62 65
-	   72 73 3A 00
 
  00000000			.code
  00000000			main PROC
 
- 00000000  B9 00000007			mov ecx, lengthof array
- 00000005  BB 00000000			mov ebx, 0	;index
- 0000000A  B8 00000000			mov eax, 0	;counter for even numbers
 
- 0000000F			start:
- 0000000F  F7 83 00000000 R		test array[ebx], 00000000000000000000000000000001
-	   00000001
- 00000019  75 01			jnz cont
- 0000001B  40				inc eax
- 0000001C			cont:
- 0000001C  83 C3 04			add ebx, 4
- 0000001F  E2 EE			loop start
+ 00000000  E8 00000000 E	call randomize
 
- 00000021  BA 0000001C R		mov edx, offset str1
- 00000026  E8 00000000 E		call writestring
- 0000002B  E8 00000000 E		call writeint
+ 00000005  B9 0000000A		mov ecx, 10
+ 0000000A			start:
+					;	RANDOM:
+ 0000000A  B8 00000064			mov eax, 100
+ 0000000F  E8 00000000 E		call randomrange
+ 00000014  E8 00000000 E		call writeint
+ 00000019  E8 00000000 E		call crlf
+
+ 0000001E  E2 EA			loop start
 
 
 
 
 					exit
 
- 00000037			main ENDP
+ 00000027			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:17:14
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:49:39
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -111,8 +96,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000002F DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000037 DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000027 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -180,9 +165,8 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000037 Public STDCALL
-  start  . . . . . . . . . . . .	L Near	 0000000F _TEXT	
-  cont . . . . . . . . . . . . .	L Near	 0000001C _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000027 Public STDCALL
+  start  . . . . . . . . . . . .	L Near	 0000000A _TEXT	
 
 
 Symbols:
@@ -257,7 +241,6 @@ TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-array  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -273,7 +256,6 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-str1 . . . . . . . . . . . . . .	Byte	 0000001C _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
