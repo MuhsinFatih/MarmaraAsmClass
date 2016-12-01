@@ -7,7 +7,7 @@ INCLUDE Irvine32.inc
 
 /*
 	signed  	unsigned
-if (a1 < b1) or (b1 > 45)
+if (a1 < b1) and (b1 > 45)
 	ax = ax + bx
 	cx = cx - 1
 else
@@ -25,14 +25,16 @@ else
 
 .code
 cmp al, bl
-jl iftrue
+jnl elsepart
 cmp bl, 45
-jg iftrue
-add dx, 2
-jmp continue
-iftrue:
-add ax, cx
+jng elsepart
+add ax, bx
 dec cx
+jmp continue
+
+elsepart:
+ladd dx, 2
+
 continue:
 
 
