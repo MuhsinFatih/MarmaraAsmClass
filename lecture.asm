@@ -18,12 +18,13 @@ main PROC
 
 call randomize
 
-mov ecx, 10
+mov ecx, 100;
 start:
 	;	RANDOM:
-	mov eax, 100
+	mov eax, 26
 	call randomrange
-	call writeint
+	add eax, 61h	; or 97 decimal..
+	call writechar
 	call crlf
 
 	loop start

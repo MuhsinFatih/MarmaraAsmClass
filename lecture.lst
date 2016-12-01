@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:49:39
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:54:01
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -31,24 +31,26 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
  00000000  E8 00000000 E	call randomize
 
- 00000005  B9 0000000A		mov ecx, 10
+ 00000005  B9 00000064		mov ecx, 100;
  0000000A			start:
+ 0000000A  B9 00000064		mov ecx, 100;
 					;	RANDOM:
- 0000000A  B8 00000064			mov eax, 100
- 0000000F  E8 00000000 E		call randomrange
- 00000014  E8 00000000 E		call writeint
- 00000019  E8 00000000 E		call crlf
+ 0000000F  B8 0000001A			mov eax, 26
+ 00000014  E8 00000000 E		call randomrange
+ 00000019  83 C0 61			add eax, 61h	; or 97 decimal..
+ 0000001C  E8 00000000 E		call writechar
+ 00000021  E8 00000000 E		call crlf
 
- 0000001E  E2 EA			loop start
+ 00000026  E2 E2			loop start
 
 
 
 
 					exit
 
- 00000027			main ENDP
+ 0000002F			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:49:39
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 15:54:01
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -97,7 +99,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000027 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002F DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -165,7 +167,7 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000027 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002F Public STDCALL
   start  . . . . . . . . . . . .	L Near	 0000000A _TEXT	
 
 
