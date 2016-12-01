@@ -25,8 +25,8 @@ main PROC
 	mov edi, 0					;index for array
 
 start:
-	add array[edi],0			;sign flag will give whether x<0 or not
-	js negative
+	cmp array[edi],0			;sign flag will give whether x<0 or not
+	jl negative
 	add ebx, array[edi]
 	jmp continue	
 
