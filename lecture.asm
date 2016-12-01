@@ -14,7 +14,7 @@ INCLUDE Irvine32.inc
 		ax = ax + 1
 		bx = bx + 1
 		cx = ax + bx
-	while (cx <= 100) or (bx >= 50)
+	while (cx <= 100) and (bx >= 50)
 */
 
 .data
@@ -29,15 +29,14 @@ start:
 	add cx, bx
 
 	cmp cx, 100
-	jbe start
+	jnbe exit
 
 	cmp bx, 50
 	jae start
+	
 
-elsepart:
-ladd dx, 2
 
-continue:
+exit:
 
 
 main PROC
