@@ -5,13 +5,42 @@ TITLE Add and Subtract              (AddSub.asm)
 
 INCLUDE Irvine32.inc
 
+/*
+
+if ax == bx
+	ax = ax + 1
+	bx = bx - 1
+else
+	cx = cx + 1
+	dx = 0
+
+*/
+
+/*
+	je  -> jump if equals
+	jne -> jump if not equal
+
+*/
+
+
+.data
+
+cmp ax, bx
+je iftrue
+
+inc cs
+mov dx, 0
+jmp x
+
+iftrue:
+inc ax
+dec bx
+
 .code
 main PROC
 
-	mov eax,10000h		; EAX = 10000h
-	add eax,40000h		; EAX = 50000h
-	sub eax,20000h		; EAX = 30000h
-	call DumpRegs
+	
+	;call DumpRegs
 
 	exit
 main ENDP
