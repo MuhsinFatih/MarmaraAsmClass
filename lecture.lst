@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 16:00:53
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 16:16:20
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -31,31 +31,39 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
  00000000  E8 00000000 E	call randomize
  00000005  BB 00000001		mov ebx, 1;
- 0000000A  B9 00000064		mov ecx, 100;
- 0000000F			start:
-					;	RANDOM:
- 0000000F  B8 0000001A			mov eax, 26
- 00000014  E8 00000000 E		call randomrange
- 00000019  83 C0 61			add eax, 61h	; or 97 decimal..
- 0000001C  50				push eax
- 0000001D  8B C3			mov eax, ebx
- 0000001F  E8 00000000 E		call settextcolor
- 00000024  58				pop eax
+ 0000000A  B9 00000014		mov ecx, 20;
+ 0000000F  BB 00000001		mov ebx, 1
+ 00000014			outerloop:
+					
+ 00000014  51				push ecx
+ 00000015  B9 00000014			mov ecx, 20
+					
 
- 00000025  E8 00000000 E		call writechar
- 0000002A  E8 00000000 E		call crlf
- 0000002F  43				inc ebx
-
- 00000030  E2 DD			loop start
+ 0000001A				start:
+ 0000001A  B8 0000001A				mov eax, 26
+ 0000001F  E8 00000000 E			call randomrange
+ 00000024  83 C0 61				add eax, 61h	; or 97 decimal..
+ 00000027  50					push eax
+ 00000028  8B C3				mov eax, ebx
+ 0000002A  E8 00000000 E			call settextcolor
+ 0000002F  58					pop eax
+ 00000030  E8 00000000 E			call writechar
+ 00000035  B0 20				mov al, ' '
+ 00000037  E8 00000000 E			call writechar
+ 0000003C  43					inc ebx
+ 0000003D  E2 DB				loop start
+ 0000003F  59				pop ecx
+ 00000040  E8 00000000 E		call crlf
+ 00000045  E2 CD			loop outerloop
 
 
 
 
 					exit
 
- 00000039			main ENDP
+ 0000004E			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 16:00:53
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 16:16:20
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -104,7 +112,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000039 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004E DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -172,8 +180,9 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000039 Public STDCALL
-  start  . . . . . . . . . . . .	L Near	 0000000F _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004E Public STDCALL
+  outerloop  . . . . . . . . . .	L Near	 00000014 _TEXT	
+  start  . . . . . . . . . . . .	L Near	 0000001A _TEXT	
 
 
 Symbols:

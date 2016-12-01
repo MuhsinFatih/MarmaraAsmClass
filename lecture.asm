@@ -18,22 +18,30 @@ main PROC
 
 call randomize
 mov ebx, 1;
-mov ecx, 100;
-start:
-	;	RANDOM:
-	mov eax, 26
-	call randomrange
-	add eax, 61h	; or 97 decimal..
-	push eax
-	mov eax, ebx
-	call settextcolor
-	pop eax
+mov ecx, 20;
+mov ebx, 1
+outerloop:
+	
+	push ecx
+	mov ecx, 20
+	
 
-	call writechar
+	start:
+		mov eax, 26
+		call randomrange
+		add eax, 61h	; or 97 decimal..
+		push eax
+		mov eax, ebx
+		call settextcolor
+		pop eax
+		call writechar
+		mov al, ' '
+		call writechar
+		inc ebx
+		loop start
+	pop ecx
 	call crlf
-	inc ebx
-
-	loop start
+	loop outerloop
 
 
 
