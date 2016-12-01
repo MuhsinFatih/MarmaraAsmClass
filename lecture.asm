@@ -8,7 +8,7 @@ INCLUDE Irvine32.inc
 
 
 /*
-	while (ax != bx) or (cx < 100)
+	while (ax != bx) and (cx < 100)
 		ax = ax - 1
 		bx = bx + 1
 		cx = cx * 2
@@ -23,11 +23,10 @@ INCLUDE Irvine32.inc
 
 start:
 	cmp ax, bx
-	jne while
-	jne while
+	je _exit
 	cmp cx, 100
 	jnl _exit
-while:
+
 	dec ax
 	inc bx
 	add cx,cx ; lol. dont know multiplication yet
