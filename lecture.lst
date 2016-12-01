@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    11/06/16 03:56:42
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 14:59:35
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -18,18 +18,68 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 			      C .LIST
 			      C 
 
+
+
+
+
+ 00000000			.data
+
+ 00000000 FFFFFFFB		array	sdword	-5,3,9,-2,-6,6,7
+	   00000003
+	   00000009
+	   FFFFFFFE
+	   FFFFFFFA
+	   00000006
+	   00000007
+ 0000001C 54 6F 74 61 6C	str1	byte	"Total of - numbers:",0
+	   20 6F 66 20 2D
+	   20 6E 75 6D 62
+	   65 72 73 3A 00
+ 00000030 54 6F 74 61 6C	str2	byte	"Total of - numbers:",0
+	   20 6F 66 20 2D
+	   20 6E 75 6D 62
+	   65 72 73 3A 00
+
  00000000			.code
  00000000			main PROC
 
- 00000000  B8 00010000			mov eax,10000h		; EAX = 10000h
- 00000005  05 00040000			add eax,40000h		; EAX = 50000h
- 0000000A  2D 00020000			sub eax,20000h		; EAX = 30000h
- 0000000F  E8 00000000 E		call DumpRegs
+ 00000000  B8 00000000			mov eax, 0					; total of neg numbers
+ 00000005  BB 00000000			mov ebx, 0					; total of pos numbers
+
+ 0000000A  B9 00000007			mov ecx, lengthof array
+ 0000000F  BF 00000000			mov edi, 0					;index for array
+
+ 00000014			start:
+ 00000014  83 87 00000000 R		add array[edi],0			;sign flag will give whether x<0 or not
+	   00
+ 0000001B  78 08			js negative
+ 0000001D  03 9F 00000000 R		add ebx, array[edi]
+ 00000023  EB 06			jmp continue	
+
+ 00000025			negative:
+ 00000025  03 87 00000000 R		add eax, array[edi]
+ 0000002B			continue:
+ 0000002B  83 C7 04			add edi, 4
+ 0000002E  E2 E4			loop start
+
+ 00000030  BA 0000001C R		mov edx, offset str1
+ 00000035  E8 00000000 E		call writestring
+ 0000003A  E8 00000000 E		call writeint
+
+ 0000003F  E8 00000000 E		call crlf
+
+ 00000044  BA 00000030 R		mov edx, offset str2
+ 00000049  E8 00000000 E		call writestring
+ 0000004E  8B C3			mov eax, ebx
+ 00000050  E8 00000000 E		call writeint
+						
+ 00000055  E8 00000000 E		call DumpRegs
 
 					exit
- 0000001B			main ENDP
+
+ 00000061			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    11/06/16 03:56:42
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/01/16 14:59:35
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -77,8 +127,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000001B DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000044 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000061 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -146,7 +196,10 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000061 Public STDCALL
+  start  . . . . . . . . . . . .	L Near	 00000014 _TEXT	
+  negative . . . . . . . . . . .	L Near	 00000025 _TEXT	
+  continue . . . . . . . . . . .	L Near	 0000002B _TEXT	
 
 
 Symbols:
@@ -221,6 +274,7 @@ TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+array  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -236,6 +290,8 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+str1 . . . . . . . . . . . . . .	Byte	 0000001C _DATA	
+str2 . . . . . . . . . . . . . .	Byte	 00000030 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 

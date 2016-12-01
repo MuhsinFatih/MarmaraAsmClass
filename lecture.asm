@@ -7,41 +7,49 @@ INCLUDE Irvine32.inc
 
 
 
-/*
-	while (ax != bx) and (cx < 100)
-		ax = ax - 1
-		bx = bx + 1
-		cx = cx * 2
-		.
-		.
-*/
+
 
 .data
 
+array	sdword	-5,3,9,-2,-6,6,7
+str1	byte	"Total of - numbers:",0
+str2	byte	"Total of - numbers:",0
 
 .code
-
-start:
-	cmp ax, bx
-	je _exit
-	cmp cx, 100
-	jnl _exit
-
-	dec ax
-	inc bx
-	add cx,cx ; lol. dont know multiplication yet
-	jmp start
-
-_exit:
-	
-
-
-
 main PROC
 
-	
-	;call DumpRegs
+	mov eax, 0					; total of neg numbers
+	mov ebx, 0					; total of pos numbers
+
+	mov ecx, lengthof array
+	mov edi, 0					;index for array
+
+start:
+	add array[edi],0			;sign flag will give whether x<0 or not
+	js negative
+	add ebx, array[edi]
+	jmp continue	
+
+negative:
+	add eax, array[edi]
+continue:
+	add edi, 4
+	loop start
+
+	mov edx, offset str1
+	call writestring
+	call writeint
+
+	call crlf
+
+	mov edx, offset str2
+	call writestring
+	mov eax, ebx
+	call writeint
+		
+	call DumpRegs
 
 	exit
+
 main ENDP
 END main
