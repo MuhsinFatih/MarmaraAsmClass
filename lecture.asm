@@ -6,13 +6,12 @@ TITLE Add and Subtract              (AddSub.asm)
 INCLUDE Irvine32.inc
 
 /*
-
-if ax == bx
-	ax = ax + 1
-	bx = bx - 1
+	unsigned	 signed
+if (a1 < b1) or (b1 > 45)
+	ax = ax + bx
+	cx = cx - 1
 else
-	cx = cx + 1
-	dx = 0
+	dx = dx + 2
 
 */
 
@@ -21,22 +20,22 @@ else
 	jne -> jump if not equal
 
 */
-
-
 .data
 
-cmp ax, bx
-je iftrue
-
-inc cs
-mov dx, 0
-jmp x
-
-iftrue:
-inc ax
-dec bx
 
 .code
+cmp al, bl
+jl iftrue
+cmp bl, 45
+jg iftrue
+add dx, 2
+jmp continue
+iftrue:
+add ax, cx
+dec cx
+continue:
+
+
 main PROC
 
 	
