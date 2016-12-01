@@ -8,13 +8,12 @@ INCLUDE Irvine32.inc
 
 
 /*
-	do
-		.
-		.
-		ax = ax + 1
+	while (ax != bx)
+		ax = ax - 1
 		bx = bx + 1
-		cx = ax + bx
-	while (cx <= 100) and (bx >= 50)
+		cx = cx * 2
+		.
+		.
 */
 
 .data
@@ -23,20 +22,16 @@ INCLUDE Irvine32.inc
 .code
 
 start:
-	inc ax
+	cmp ax, bx
+	je exit
+	dec ax
 	inc bx
-	mov cx, ax
-	add cx, bx
-
-	cmp cx, 100
-	jnbe exit
-
-	cmp bx, 50
-	jae start
-	
-
+	add cx,cx ; lol. dont know multiplication yet
+	jmp start
 
 exit:
+	
+
 
 
 main PROC
