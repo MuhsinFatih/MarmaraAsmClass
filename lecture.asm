@@ -6,7 +6,7 @@ TITLE Add and Subtract              (AddSub.asm)
 INCLUDE Irvine32.inc
 
 /*
-	unsigned	 signed
+	signed  	unsigned
 if (a1 < b1) or (b1 > 45)
 	ax = ax + bx
 	cx = cx - 1
