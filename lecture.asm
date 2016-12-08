@@ -15,10 +15,10 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	mov eax, 0
+	mov eax, 99999999h
 
 	mov al, 20h
-	mov bl, 10h
+	mov bl, 5h
 
 	mul bl
 
