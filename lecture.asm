@@ -19,7 +19,7 @@ main PROC
 	; bx / al
 	; signed
 
-	mov bx, 8011h
+	mov bx, 7011h
 	mov al, 10h
 
 	movzx cx, al
