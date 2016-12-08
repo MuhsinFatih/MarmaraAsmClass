@@ -18,11 +18,11 @@ main PROC
 	;rol (rotate left)
 	;rol dest, counter
 
-	mov al, 83h
-	rol al, 1
+	mov al, 76h
+	rol al, 2
 	
-	;10000011 --> 00000111
-	;al = 07h
+	;01110110 --> 11011001
+	;al = D9h
 	; C 1
 	; O 1
 
