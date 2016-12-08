@@ -17,9 +17,13 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 	
+again:
 	mov edx, offset str1
 	call writestring
 	call readint	;money in eax
+
+	sub eax, 0
+	js again
 
 	mov ecx, lengthof money
 	mov ebx, 0
