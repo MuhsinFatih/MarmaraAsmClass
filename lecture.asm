@@ -11,22 +11,23 @@ INCLUDE Irvine32.inc
 
 .data
 
+	var1	word	5
 
 .code
 main PROC
-
-	mov eax, 0
-	mov al, 20
-	mov bl, -2
-	call dumpregs
-
-	imul bl		; ax = al * bl
 	
-	imul ax, var1, 3		;ax = var1 * 3
+	; bx / al
 
-	imul ax, bx				;ax = ax * bx
+	mov bx, 800h
+	mov al, 10h
+
+	mov cl, al
+	mov ax, bx
+
+	div cl
 
 	call dumpregs
+	
 
 	exit
 
