@@ -15,15 +15,13 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	mov cl, 3
-	mov al, -2
-	shl al, cl
+	mov al, 40h
+	shl al, 1
 
-	; C 1
+	; C 0
 	; S 1
 	; Z 0
-	; O 0
-
+	; O 1
 
 
 
