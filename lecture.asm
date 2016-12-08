@@ -15,17 +15,14 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	mov eax, 99999999h
-	mov edx, 99999999h
+	mov al, -2	; al = FEh
+	mov bl, 5	; bl = 05h
+	call dumpregs
 
-	mov ax, 200h
-	mov bx, 100h		; result will be in dx:ax pair
-
-	mul bx
-
-	mov cx, dx
-	shl ecx, 16
-	mov cx, ax
+	; imul bl		; ax = al * bl
+	
+	; lets make a mistake, use unsigned multiplication
+	mul bl		; ax = FEh * 05h
 
 	call dumpregs
 
