@@ -15,16 +15,31 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	; unsigned multiplication
-	
-	mov ax, 4000h
-	mov bx, 20h
+	; signed multiplication
+	; imul x (r/m)
 
-	mul bx	; dx:ax = ax * bx
+	; x -> 8 bits
+	imul bl		; ax = bl * al
 
-	;had the result fitted ax, carry would have been 0. But in this example it overflows ax:
-	; C: 1
-	; O: 1
+	; x -> 16 bits
+	imul cx		; ax = cx * ax
+
+	; x -> 32 bits
+	imul edi	; edx:eax = edi * eax
+
+	; legal usages:
+	; imul x, y		(r) / (r/m/imm)
+	; x = x * y
+
+	; imul x, y, z	(r) / (r/m) / (imm)
+	; x = y * z
+
+	imul ax, bx, 5
+	imul edx, var3, 7
+
+	imul ax, bx
+	imul cx, 5
+	imul ecx, var3
 
 	exit
 
