@@ -24,8 +24,18 @@ main PROC
 	; x -> 16 bit
 	mul cx	; dx:ax = cx * ax
 
-	;x -> 32 bit
-	mul edi	; edx:eax = edi * eax
+	mov bx, dx
+	shl ebx, 16
+	mov bx, ax
+
+	; OR
+	; easier, but slower since it requires reading and writing to memory
+	push dx
+	push ax
+	pop ebx
+
+	push dx,ax
+
 
 	exit
 
