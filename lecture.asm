@@ -15,31 +15,16 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	; signed multiplication
-	; imul x (r/m)
+	; unsigned division (div)
+	; div x	(r/m)
+	; x -> 8bit
 
-	; x -> 8 bits
-	imul bl		; ax = bl * al
+	; ax |_x_
+	; ___| al
+	; ah
 
-	; x -> 16 bits
-	imul cx		; ax = cx * ax
 
-	; x -> 32 bits
-	imul edi	; edx:eax = edi * eax
-
-	; legal usages:
-	; imul x, y		(r) / (r/m/imm)
-	; x = x * y
-
-	; imul x, y, z	(r) / (r/m) / (imm)
-	; x = y * z
-
-	imul ax, bx, 5
-	imul edx, var3, 7
-
-	imul ax, bx
-	imul cx, 5
-	imul ecx, var3
+	div bl
 
 	exit
 
