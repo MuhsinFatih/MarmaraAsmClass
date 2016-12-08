@@ -19,7 +19,7 @@ main PROC
 	; bx / al
 	; unsigned
 
-	mov bx, 800h
+	mov bx, 8011h
 	mov al, 10h
 
 	movzx cx, al
