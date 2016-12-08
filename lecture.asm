@@ -18,7 +18,7 @@ main PROC
 	mov eax, 99999999h
 
 	mov al, 20h
-	mov bl, 5h
+	mov bl, 10h
 
 	mul bl
 
