@@ -16,9 +16,10 @@ INCLUDE Irvine32.inc
 main PROC
 
 	mov eax, 99999999h
+	mov edx, 99999999h
 
-	mov ax, 20h
-	mov bx, 10h		; result will be in dx:ax pair
+	mov ax, 200h
+	mov bx, 100h		; result will be in dx:ax pair
 
 	mul bx
 
