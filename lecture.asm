@@ -15,11 +15,16 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	mov bx, ax	;bx = ax
-	shl bx, 1	;bx = 2ax
-	shl ax, 4	;ax = 16ax
-	add ax, bx	;ax = 18ax
+	;rol (rotate left)
+	;rol dest, counter
 
+	mov al, 83h
+	rol al, 1
+	
+	;10000011 --> 00000111
+	;al = 07h
+	; C 1
+	; O 1
 
 
 
