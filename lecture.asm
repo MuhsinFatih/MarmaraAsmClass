@@ -16,15 +16,15 @@ INCLUDE Irvine32.inc
 main PROC
 
 	mov al, 85h
-	shr al, 1
+	sar al, 1	; shift arithmetic right
 
-	; 01000010 1
+	; 11000010 1
 	;		-->
-	; AL = 42h
+	; AL = c2h = -62
 	; C 1
-	; S 0
+	; S 1
 	; Z 0
-	; O 1
+	; O 0
 
 
 
