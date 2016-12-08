@@ -24,7 +24,7 @@ main PROC
 	mov cl, al
 	mov ax, bx
 
-	div cl
+	div cl		; al result, ah remainder
 
 	call dumpregs
 	
