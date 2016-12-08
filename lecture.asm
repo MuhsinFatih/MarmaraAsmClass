@@ -17,16 +17,17 @@ INCLUDE Irvine32.inc
 main PROC
 	
 	; bx / al
-	; unsigned
+	; signed
 
 	mov bx, 8011h
 	mov al, 10h
 
 	movzx cx, al
 	mov ax, bx
-	mov dx, 0
+	cwd
 
-	div cx		; ax result, dx remainder
+	call dumpregs
+	idiv cx		; ax result, dx remainder
 
 	call dumpregs
 	
