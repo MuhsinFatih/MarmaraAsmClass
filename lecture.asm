@@ -13,14 +13,23 @@ INCLUDE Irvine32.inc
 
 	money	dword	200,100,50,20,10,5,1
 	str1	byte	"Enter the money:",0
-
+	str2	byte	"Invalid number!",0
 .code
 main PROC
 	
+call clrscr
+jmp don
 again:
+	call clrscr
+	mov edx, offset str2
+	call writestring
+	call crlf
+	
+don:
 	mov edx, offset str1
 	call writestring
 	call readint	;money in eax
+	call crlf
 
 	sub eax, 0
 	js again
