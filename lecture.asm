@@ -15,20 +15,17 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	;rcr (rotate carry right)
-	;rcr dest, counter
+	; unsigned multiplication
+	; mul x (r/m)
 
-	mov al, 97h
-	add al, 83h	; C: 1
-	rcr al, 3
-	;al = 1Ah
+	; x -> 8 bit
+	mul bl	; ax = bl * al
 
-	;00011010 --> 10100011
-	
-	; C 0
-	; O 0
+	; x -> 16 bit
+	mul cx	; dx:ax = cx * ax
 
-
+	;x -> 32 bit
+	mul edi	; edx:eax = edi * eax
 
 	exit
 
