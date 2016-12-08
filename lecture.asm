@@ -15,20 +15,14 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	; signed division (div)
-	; div x	(r/m)
-	
+	mov eax, 0
 
-	cbw ; (convert byte to word)
-	; al --> ax (sign extend)
-	
-	cwd ; (convert word to doubleword)
-	; ax --> dx:ax (sign extend)
+	mov al, 20h
+	mov bl, 10h
 
-	cdq ; (convert doubleword to quadword)
-	; eax --> edx:eax (sign extend)
+	mul bl
 
-	div ...
+	call dumpregs
 
 	exit
 
