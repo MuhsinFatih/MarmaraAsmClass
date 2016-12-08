@@ -15,16 +15,10 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	mov al, 85h
-	sar al, 1	; shift arithmetic right
-
-	; 11000010 1
-	;		-->
-	; AL = c2h = -62
-	; C 1
-	; S 1
-	; Z 0
-	; O 0
+	mov bx, ax	;bx = ax
+	shl bx, 1	;bx = 2ax
+	shl ax, 4	;ax = 16ax
+	add ax, bx	;ax = 18ax
 
 
 
