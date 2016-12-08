@@ -15,33 +15,15 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
+	mov cl, 3
+	mov al, -2
+	shl al, cl
 
-call randomize
-mov ebx, 1;
-mov ecx, 20;
-mov ebx, 1
-outerloop:
-	
-	push ecx
-	mov ecx, 20
-	
+	; C 1
+	; S 1
+	; Z 0
+	; O 0
 
-	start:
-		mov eax, 26
-		call randomrange
-		add eax, 61h	; or 97 decimal..
-		push eax
-		mov eax, ebx
-		call settextcolor
-		pop eax
-		call writechar
-		mov al, ' '
-		call writechar
-		inc ebx
-		loop start
-	pop ecx
-	call crlf
-	loop outerloop
 
 
 

@@ -1,11 +1,10 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/02/16 21:02:00
-Add and Subtract              (AddSub.asm)		     Page 1 - 1
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/02/16 22:30:47
+HW2							     Page 1 - 1
 
 
-				TITLE Add and Subtract              (AddSub.asm)
+				TITLE HW2
+				; Muhsin Fatih Yorulmaz 150714007
 
-				; This program adds and subtracts 32-bit integers.
-				; Last update: 2/1/02
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -20,51 +19,124 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
 
-
-
  00000000			.data
 
- 00000000 FFFFFFFB		array	sdword	-5,3,9,-2,-6,6,7
-	   00000003
-	   00000009
-	   FFFFFFFE
-	   FFFFFFFA
-	   00000006
-	   00000007
- 0000001C 23 20 6F 66 20	str1	byte	"# of even numbers:",0
-	   65 76 65 6E 20
-	   6E 75 6D 62 65
-	   72 73 3A 00
+
+ 00000000 45 6E 74 65 72	prompt byte "Enter a string of max length 50:	",0
+	   20 61 20 73 74
+	   72 69 6E 67 20
+	   6F 66 20 6D 61
+	   78 20 6C 65 6E
+	   67 74 68 20 35
+	   30 3A 09 00
+ 00000022 45 6E 74 65 72	prompt2 byte "Enter another string of max length 50:	",0
+	   20 61 6E 6F 74
+	   68 65 72 20 73
+	   74 72 69 6E 67
+	   20 6F 66 20 6D
+	   61 78 20 6C 65
+	   6E 67 74 68 20
+	   35 30 3A 09 00
+ 0000004A 54 6F 74 61 6C	strResult byte "Total number of matches at same indexes: ",0
+	   20 6E 75 6D 62
+	   65 72 20 6F 66
+	   20 6D 61 74 63
+	   68 65 73 20 61
+	   74 20 73 61 6D
+	   65 20 69 6E 64
+	   65 78 65 73 3A
+	   20 00
+ 00000074 54 68 65 72 65	strResult2 byte "There are no matches at same indexes",0
+	   20 61 72 65 20
+	   6E 6F 20 6D 61
+	   74 63 68 65 73
+	   20 61 74 20 73
+	   61 6D 65 20 69
+	   6E 64 65 78 65
+	   73 00
+
+ 00000099  00000032 [		input byte 50 dup(0), 0
+	    00
+	   ] 00
+ 000000CC  00000032 [		input2 byte 50 dup(0), 0
+	    00
+	   ] 00
+
+ 000000FF 00			L1 byte 0
+ 00000100 00			L2 byte 0
 
  00000000			.code
  00000000			main PROC
+ 00000000  BA 00000000 R		mov edx, offset prompt
+ 00000005  E8 00000000 E		call writestring
+					
+ 0000000A  BA 00000099 R		mov edx, offset input
+ 0000000F  B9 00000032			mov ecx, offset lengthof input-1	;provide input length to function
 
- 00000000  B9 00000007			mov ecx, lengthof array
- 00000005  BB 00000000			mov ebx, 0	;index
- 0000000A  B8 00000000			mov eax, 0	;counter for even numbers
+ 00000014  E8 00000000 E		call readstring
+					
+ 00000019  A2 000000FF R		mov L1, al		;store length of input1
 
- 0000000F			start:
- 0000000F  F7 83 00000000 R		test array[ebx], 00000000000000000000000000000001
-	   00000001
- 00000019  75 01			jnz cont
- 0000001B  40				inc eax
- 0000001C			cont:
- 0000001C  83 C3 04			add ebx, 4
- 0000001F  E2 EE			loop start
+ 0000001E  BA 00000022 R		mov edx, offset prompt2
+ 00000023  E8 00000000 E		call writestring
 
- 00000021  BA 0000001C R		mov edx, offset str1
- 00000026  E8 00000000 E		call writestring
- 0000002B  E8 00000000 E		call writeint
+ 00000028  BA 000000CC R		mov edx, offset input2
+ 0000002D  B9 00000032			mov ecx, offset lengthof input2-1	;provide input length to function
+
+ 00000032  E8 00000000 E		call readstring
+					
+ 00000037  A2 00000100 R		mov L2, al		;store length of input2
 
 
+					
+
+					
+ 0000003C  8A 1D 000000FF R		mov bl, L1
+ 00000042  2A 1D 00000100 R		sub bl, L2
+
+ 00000048  77 09			ja above0		;if	
+ 0000004A  0F B6 0D				movzx ecx, L1	;L2 is bigger
+	   000000FF R
+ 00000051  EB 07				jmp endif0
+ 00000053				above0:				;L1 is bigger or same size
+ 00000053  0F B6 0D				movzx ecx, L2
+	   00000100 R
+ 0000005A				endif0:
+					
+ 0000005A  B4 00			mov ah, 0		;store total number of matches in AH
+ 0000005C  BB 00000000			mov ebx, 0		; store index of string in ebx
+ 00000061				start:
+ 00000061  8A 83 00000099 R			mov al, input[ebx]
+ 00000067  8A 93 000000CC R			mov dl, input2[ebx]
+
+ 0000006D  38 D0				cmp al, dl
+ 0000006F  75 02				jne endif1	;if
+ 00000071  FE C4					inc ah
+ 00000073					endif1:
 
 
-					exit
+ 00000073  43					inc ebx
+ 00000074  E2 EB				loop start
 
- 00000037			main ENDP
+ 00000076  84 E4			test ah, ah
+ 00000078  74 14			je noMatches
+ 0000007A  BA 0000004A R			mov edx, offset strResult
+ 0000007F  E8 00000000 E			call writestring
+
+ 00000084  0F B6 C4				movzx eax, ah
+ 00000087  E8 00000000 E			call writeint
+ 0000008C  EB 0A				jmp endif2
+ 0000008E				noMatches:
+ 0000008E  BA 00000074 R			mov edx, offset strResult2
+ 00000093  E8 00000000 E			call writestring
+ 00000098				endif2:
+
+				exit
+
+ 0000009F			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/02/16 21:02:00
-Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/02/16 22:30:47
+HW2							     Symbols 2 - 1
 
 
 
@@ -111,8 +183,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000002F DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000037 DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000101 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000009F DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -180,9 +252,13 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000037 Public STDCALL
-  start  . . . . . . . . . . . .	L Near	 0000000F _TEXT	
-  cont . . . . . . . . . . . . .	L Near	 0000001C _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000009F Public STDCALL
+  above0 . . . . . . . . . . . .	L Near	 00000053 _TEXT	
+  endif0 . . . . . . . . . . . .	L Near	 0000005A _TEXT	
+  start  . . . . . . . . . . . .	L Near	 00000061 _TEXT	
+  endif1 . . . . . . . . . . . .	L Near	 00000073 _TEXT	
+  noMatches  . . . . . . . . . .	L Near	 0000008E _TEXT	
+  endif2 . . . . . . . . . . . .	L Near	 00000098 _TEXT	
 
 
 Symbols:
@@ -241,6 +317,8 @@ GENERIC_READ . . . . . . . . . .	Number	 -80000000h
 GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
 INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
+L1 . . . . . . . . . . . . . . .	Byte	 000000FF _DATA	
+L2 . . . . . . . . . . . . . . .	Byte	 00000100 _DATA	
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
@@ -257,7 +335,6 @@ TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-array  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -265,6 +342,8 @@ cyan . . . . . . . . . . . . . .	Number	 00000003h
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+input2 . . . . . . . . . . . . .	Byte	 000000CC _DATA	
+input  . . . . . . . . . . . . .	Byte	 00000099 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -272,8 +351,11 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+prompt2  . . . . . . . . . . . .	Byte	 00000022 _DATA	
+prompt . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-str1 . . . . . . . . . . . . . .	Byte	 0000001C _DATA	
+strResult2 . . . . . . . . . . .	Byte	 00000074 _DATA	
+strResult  . . . . . . . . . . .	Byte	 0000004A _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
