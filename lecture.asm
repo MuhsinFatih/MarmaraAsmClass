@@ -15,14 +15,14 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	;rol (rotate left)
-	;rol dest, counter
+	;ror (rotate right)
+	;ror dest, counter
 
-	mov al, 76h
-	rol al, 2
+	mov al, 0A9h
+	ror al, 3
 	
-	;01110110 --> 11011001
-	;al = D9h
+	;10101001 --> 00110101
+	;al = 35h
 	; C 1
 	; O 1
 
