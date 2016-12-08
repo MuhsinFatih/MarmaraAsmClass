@@ -17,14 +17,24 @@ main PROC
 
 	; unsigned division (div)
 	; div x	(r/m)
-	; x -> 8bit
+	; x -> 32bit
 
-	; ax |_x_
-	; ___| al
-	; ah
+	mov edx, ebx
+	shr edx, 16
+	mov ax, bx
+	
+	; OR
 
+	mov ax, bx
+	shr ebx, 16
+	mov dx, bx
 
-	div bl
+	; OR
+	
+	; ebx = 12345678h
+	push ebx
+	pop ax ; ax = 5678h
+	pop dx ; dx = 1234h
 
 	exit
 
