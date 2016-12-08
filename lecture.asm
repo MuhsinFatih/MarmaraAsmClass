@@ -15,15 +15,16 @@ INCLUDE Irvine32.inc
 .code
 main PROC
 
-	;rcl (rotate carry left)
-	;rcl dest, counter
+	;rcr (rotate carry right)
+	;rcr dest, counter
 
-	sub al, al ; just so we make sure carry is 0
-	mov al, 93h
-	rcl al, 2
+	mov al, 97h
+	add al, 83h	; C: 1
+	rcr al, 3
+	;al = 1Ah
+
+	;00011010 --> 10100011
 	
-	;10010011 --> 01001101
-	;al = 4Dh
 	; C 0
 	; O 0
 
