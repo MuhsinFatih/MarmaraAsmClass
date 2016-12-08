@@ -17,10 +17,10 @@ main PROC
 
 	mov eax, 99999999h
 
-	mov al, 20h
-	mov bl, 10h
+	mov ax, 20h
+	mov bx, 10h		; result will be in dx:ax pair
 
-	mul bl
+	mul bx
 
 	call dumpregs
 
