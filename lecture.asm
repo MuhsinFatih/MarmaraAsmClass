@@ -16,26 +16,15 @@ INCLUDE Irvine32.inc
 main PROC
 
 	; unsigned multiplication
-	; mul x (r/m)
+	
+	mov ax, 4000h
+	mov bx, 20h
 
-	; x -> 8 bit
-	mul bl	; ax = bl * al
+	mul bx	; dx:ax = ax * bx
 
-	; x -> 16 bit
-	mul cx	; dx:ax = cx * ax
-
-	mov bx, dx
-	shl ebx, 16
-	mov bx, ax
-
-	; OR
-	; easier, but slower since it requires reading and writing to memory
-	push dx
-	push ax
-	pop ebx
-
-	push dx,ax
-
+	;had the result fitted ax, carry would have been 0. But in this example it overflows ax:
+	; C: 1
+	; O: 1
 
 	exit
 
