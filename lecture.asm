@@ -23,6 +23,10 @@ main PROC
 
 	mul bx
 
+	mov cx, dx
+	shl ecx, 16
+	mov cx, ax
+
 	call dumpregs
 
 	exit
