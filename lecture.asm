@@ -11,25 +11,35 @@ INCLUDE Irvine32.inc
 
 .data
 
-	var1	word	5
+	money	dword	200,100,50,20,10,5,1
+	str1	byte	"Enter the money:",0
 
 .code
 main PROC
 	
-	; bx / al
-	; signed
+	mov edx, offset str1
+	call writestring
+	call readint	;money in eax
 
-	mov bx, 7011h
-	mov al, 10h
+	mov ecx, lengthof money
+	mov ebx, 0
+	start:
+		mov edx, 0
+		div money[ebx]
+		
+		call writedec
+		mov al, 'x'
+		call writechar
+		mov eax, money[ebx]
+		call writedec
+		
+		call crlf
+		mov eax, edx
+		add ebx, 4
 
-	movzx cx, al
-	mov ax, bx
-	cwd
 
-	call dumpregs
-	idiv cx		; ax result, dx remainder
-
-	call dumpregs
+		loop start
+	
 	
 
 	exit
