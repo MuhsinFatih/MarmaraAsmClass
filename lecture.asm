@@ -11,8 +11,16 @@ INCLUDE Irvine32.inc
 
 .data
 
-	
+	msg1 byte "Message",0
 .code
+
+msgyaz MACRO adres
+	push edx
+	mov edx, offset adres
+	call writestring
+	pop edx
+
+ENDM
 
 write MACRO x
 	LOCAL str1	; This prevented the previous error
@@ -27,13 +35,11 @@ write MACRO x
 ENDM
 
 main PROC
-mov ecx, 999999999
-	start:
-		write "T"
-		loop start
+	write "This is written by a macro"
 	call crlf
-	write "A"	; this will NOT throw an error
-	
+	write "another string"	; this will NOT throw an error
+	call crlf
+	msgyaz msg1
 	exit
 
 main ENDP
