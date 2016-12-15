@@ -14,21 +14,20 @@ INCLUDE Irvine32.inc
 	
 .code
 
-wchar MACRO x
+addition MACRO x,y
 	push eax
-	mov al, x
-	call writechar
+	mov eax, x
+	add eax, y
+	call writeint
 	pop eax
 ENDM
 
 main PROC
 	
 	mov ecx, 10
-	mov al, 97
-	start:
-		wchar al
-		inc al
-		loop start
+	mov edx, 20
+	
+	addition ecx, edx
 	
 	exit
 
