@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:55:09
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:11:18
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -30,20 +30,11 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 					
  00000000			.code
 					
-					findbigger MACRO x, y
-						mov eax, x
-					cmp eax, y
-					jge nothing
-					mov eax, y
-				nothing:
-				
-					ENDM
 				
 				
-				main PROC
- 00000000				call clrscr
- 00000000  E8 00000000 E		mwrite "Enter the first number: "
-					call readint
+ 00000000			main PROC
+ 00000000  E8 00000000 E		call clrscr
+					mwrite "Enter the first number: "
  00000000		     1		.data				
  00000000 45 6E 74 65 72     1		??0000 BYTE "Enter the first number: ",0		
 	   20 74 68 65 20
@@ -55,10 +46,10 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
  00000006  BA 00000000 R     1		mov  edx,OFFSET ??0000
  0000000B  E8 00000000 E     1		call Writestring
  00000010  5A		     1		pop  edx
- 00000011  E8 00000000 E		mov ebx, eax		; first number in ebx
- 00000016  8B D8			
+ 00000011  E8 00000000 E		call readint
+ 00000016  8B D8			mov ebx, eax		; first number in ebx
+					
 					mwrite "Enter the second number: "
-					call readint		; second number in eax
  00000019		     1		.data				
  00000019 45 6E 74 65 72     1		??0001 BYTE "Enter the second number: ",0		
 	   20 74 68 65 20
@@ -71,31 +62,36 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
  00000019  BA 00000019 R     1		mov  edx,OFFSET ??0001
  0000001E  E8 00000000 E     1		call Writestring
  00000023  5A		     1		pop  edx
- 00000024  E8 00000000 E	
-					findbigger eax, ebx
+ 00000024  E8 00000000 E		call readint		; second number in eax
 				
- 00000029  8B C0	     1		mov eax, eax
- 0000002B  3B C3	     1		cmp eax, ebx
- 0000002D  7D 02	     1		jge nothing
- 0000002F  8B C3	     1		mov eax, ebx
- 00000031		     1	nothing:
+ 00000029  E8 00000018			call findbigger
+				
 					mwrite "The bigger one: "
-					call writeint
  00000033		     1		.data				
  00000033 54 68 65 20 62     1		??0002 BYTE "The bigger one: ",0		
 	   69 67 67 65 72
 	   20 6F 6E 65 3A
 	   20 00
- 00000031		     1		.code
- 00000031  52		     1		push edx
- 00000032  BA 00000033 R     1		mov  edx,OFFSET ??0002
- 00000037  E8 00000000 E     1		call Writestring
- 0000003C  5A		     1		pop  edx
- 0000003D  E8 00000000 E	
+ 0000002E		     1		.code
+ 0000002E  52		     1		push edx
+ 0000002F  BA 00000033 R     1		mov  edx,OFFSET ??0002
+ 00000034  E8 00000000 E     1		call Writestring
+ 00000039  5A		     1		pop  edx
+ 0000003A  E8 00000000 E		call writeint
+				
 					exit
-				main ENDP
- 00000049			END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:55:09
+ 00000046			main ENDP
+				
+ 00000046			findbigger PROC
+				LOCAL fn: dword, sn: dword
+ 0000004C  89 45 FC			mov fn, eax
+ 0000004F  39 5D FC			cmp fn, ebx
+				
+				ret
+ 00000054			findbigger ENDP
+				
+				END main
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:11:18
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -111,7 +107,6 @@ ShowFlag . . . . . . . . . . . .	Proc
 ShowRegister . . . . . . . . . .	Proc
 Startup  . . . . . . . . . . . .	Proc
 WriteSpace . . . . . . . . . . .	Proc
-findbigger . . . . . . . . . . .	Proc
 mDumpMem . . . . . . . . . . . .	Proc
 mGotoxy  . . . . . . . . . . . .	Proc
 mNewLine . . . . . . . . . . . .	Proc
@@ -164,7 +159,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000044 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000049 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000054 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -232,8 +227,10 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000049 Public STDCALL
-  nothing  . . . . . . . . . . .	L Near	 00000031 _TEXT	
+findbigger . . . . . . . . . . .	P Near	 00000046 _TEXT	Length= 0000000E Public STDCALL
+  fn . . . . . . . . . . . . . .	DWord	 bp - 00000004
+  sn . . . . . . . . . . . . . .	DWord	 bp - 00000008
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000046 Public STDCALL
 
 
 Symbols:

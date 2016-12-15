@@ -14,15 +14,6 @@ INCLUDE Macros.inc
 	
 .code
 	
-	findbigger MACRO x, y
-	
-	mov eax, x
-	cmp eax, y
-	jge nothing
-	mov eax, y
-nothing:
-
-	ENDM
 
 
 main PROC
@@ -34,11 +25,20 @@ main PROC
 	mwrite "Enter the second number: "
 	call readint		; second number in eax
 
-	findbigger eax, ebx
+	call findbigger
 
 	mwrite "The bigger one: "
 	call writeint
 
 	exit
 main ENDP
+
+findbigger PROC
+LOCAL fn: dword, sn: dword
+	mov fn, eax
+	cmp fn, ebx
+
+ret
+findbigger ENDP
+
 END main
