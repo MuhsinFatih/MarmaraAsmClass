@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:11:18
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:16:49
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -86,12 +86,14 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 				LOCAL fn: dword, sn: dword
  0000004C  89 45 FC			mov fn, eax
  0000004F  39 5D FC			cmp fn, ebx
-				
+ 00000052  7D 02			jge nothing
+ 00000054  8B C3			mov eax, ebx
+ 00000056			nothing:
 				ret
- 00000054			findbigger ENDP
+ 00000058			findbigger ENDP
 				
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:11:18
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:16:49
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -159,7 +161,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000044 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000054 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000058 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -227,9 +229,10 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-findbigger . . . . . . . . . . .	P Near	 00000046 _TEXT	Length= 0000000E Public STDCALL
+findbigger . . . . . . . . . . .	P Near	 00000046 _TEXT	Length= 00000012 Public STDCALL
   fn . . . . . . . . . . . . . .	DWord	 bp - 00000004
   sn . . . . . . . . . . . . . .	DWord	 bp - 00000008
+  nothing  . . . . . . . . . . .	L Near	 00000056 _TEXT	
 main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000046 Public STDCALL
 
 

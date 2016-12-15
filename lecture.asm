@@ -37,8 +37,9 @@ findbigger PROC
 LOCAL fn: dword, sn: dword
 	mov fn, eax
 	cmp fn, ebx
-
-	mov ebp, 0		; this will result in an error
+	jge nothing
+	mov eax, ebx
+nothing:
 ret
 findbigger ENDP
 
