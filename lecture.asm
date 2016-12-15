@@ -33,17 +33,14 @@ main ENDP
 
 findbigger PROC fn: dword, sn: dword
 	push eax
-	push ebx
 	mov eax, fn
-	mov ebx, sn
 	
-	cmp eax, ebx
+	cmp eax, sn
 	jge nothing
-	mov eax, ebx
+	mov eax, sn
 nothing:
 	mwrite "the bigger one: "
 	call writeint
-	pop ebx
 	pop eax
 	ret
 findbigger ENDP
