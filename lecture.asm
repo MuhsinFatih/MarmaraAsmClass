@@ -15,6 +15,7 @@ INCLUDE Irvine32.inc
 .code
 
 write MACRO x
+	LOCAL str1	; This prevented the previous error
 	.data
 		str1 byte x,0
 
@@ -26,8 +27,12 @@ write MACRO x
 ENDM
 
 main PROC
-	write "This is written by a macro"
-	
+mov ecx, 999999999
+	start:
+		write "T"
+		loop start
+	call crlf
+	write "A"	; this will NOT throw an error
 	
 	exit
 

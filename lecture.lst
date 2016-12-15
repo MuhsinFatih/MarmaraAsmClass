@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:14:46
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:24:34
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -28,33 +28,39 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
  00000000			.code
 				
 				write MACRO x
-					.data		str1 byte x,0
+					LOCAL str1	; This prevented the previous error	.data		str1 byte x,0
 				
 					.code		push edx		mov edx, offset str1
 						call writestring		pop edxENDM
 				
 				main PROC
-					write "This is written by a macro"
-					
-					
-					exit
- 00000000			
-				main ENDP
+				mov ecx, 999999999
+					start:
+						write "T"
+						loop start
+					call crlf
+ 00000000				write "A"	; this will NOT throw an error
+ 00000000  B9 3B9AC9FF			
+ 00000005				exit
+				
  00000000		     1		.data
- 00000000 54 68 69 73 20     1			str1 byte "This is written by a macro",0
-	   69 73 20 77 72
-	   69 74 74 65 6E
-	   20 62 79 20 61
-	   20 6D 61 63 72
-	   6F 00
- 00000000		     1		.code
- 00000000  52		     1			push edx
- 00000001  BA 00000000 R     1			mov edx, offset str1
- 00000006  E8 00000000 E     1			call writestring
- 0000000B  5A		     1			pop edx
-				END main
- 00000013
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:14:46
+ 00000000 54 00		     1			??0000 byte "T",0
+ 00000005		     1		.code
+ 00000005  52		     1			push edx
+ 00000006  BA 00000000 R     1			mov edx, offset ??0000
+ 0000000B  E8 00000000 E     1			call writestring
+ 00000010  5A		     1			pop edx
+ 00000011  E2 F2		main ENDP
+ 00000013  E8 00000000 E	END main
+ 00000002		     1		.data
+ 00000002 41 00		     1			??0001 byte "A",0
+ 00000018		     1		.code
+ 00000018  52		     1			push edx
+ 00000019  BA 00000002 R     1			mov edx, offset ??0001
+ 0000001E  E8 00000000 E     1			call writestring
+ 00000023  5A		     1			pop edx
+ 0000002B
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:24:34
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -109,8 +115,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000001B DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000013 DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000004 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002B DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -178,13 +184,16 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000013 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002B Public STDCALL
+  start  . . . . . . . . . . . .	L Near	 00000005 _TEXT	
 
 
 Symbols:
 
                 N a m e                 Type     Value    Attr
 
+??0000 . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+??0001 . . . . . . . . . . . . .	Byte	 00000002 _DATA	
 @CodeSize  . . . . . . . . . . .	Number	 00000000h   
 @DataSize  . . . . . . . . . . .	Number	 00000000h   
 @Interface . . . . . . . . . . .	Number	 00000003h   
@@ -268,7 +277,6 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-str1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
