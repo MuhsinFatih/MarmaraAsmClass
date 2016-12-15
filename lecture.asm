@@ -14,20 +14,20 @@ INCLUDE Irvine32.inc
 	
 .code
 
-addition MACRO x,y
-	push eax
-	mov eax, x
-	add eax, y
-	call writeint
-	pop eax
+write MACRO x
+	.data
+		str1 byte x,0
+
+	.code
+		push edx
+		mov edx, offset str1
+		call writestring
+		pop edx
 ENDM
 
 main PROC
+	write "This is written by a macro"
 	
-	mov ecx, 10
-	mov edx, 20
-	
-	addition ecx, edx
 	
 	exit
 

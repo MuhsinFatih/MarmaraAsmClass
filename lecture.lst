@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 13:57:28
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:14:46
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -27,29 +27,34 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 					
  00000000			.code
 				
-				wchar MACRO x
-					push eax	mov al, x
-					call writechar	pop eaxENDM
+				write MACRO x
+					.data		str1 byte x,0
+				
+					.code		push edx		mov edx, offset str1
+						call writestring		pop edxENDM
 				
 				main PROC
+					write "This is written by a macro"
 					
-					mov ecx, 10
- 00000000				mov al, 97
-					start:
- 00000000  B9 0000000A				wchar al
- 00000005  B0 61				inc al
- 00000007					loop start
 					
- 00000007  50		     1		push eax
- 00000008  8A C0	     1		mov al, al
- 0000000A  E8 00000000 E     1		call writechar
- 0000000F  58		     1		pop eax
- 00000010  FE C0			exit
- 00000012  E2 F3		
+					exit
+ 00000000			
 				main ENDP
+ 00000000		     1		.data
+ 00000000 54 68 69 73 20     1			str1 byte "This is written by a macro",0
+	   69 73 20 77 72
+	   69 74 74 65 6E
+	   20 62 79 20 61
+	   20 6D 61 63 72
+	   6F 00
+ 00000000		     1		.code
+ 00000000  52		     1			push edx
+ 00000001  BA 00000000 R     1			mov edx, offset str1
+ 00000006  E8 00000000 E     1			call writestring
+ 0000000B  5A		     1			pop edx
 				END main
- 0000001B
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 13:57:28
+ 00000013
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:14:46
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -59,7 +64,7 @@ Macros:
 
                 N a m e                 Type
 
-wchar  . . . . . . . . . . . . .	Proc
+write  . . . . . . . . . . . . .	Proc
 
 
 Structures and Unions:
@@ -104,8 +109,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000001B DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000001B DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000013 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -173,8 +178,7 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
-  start  . . . . . . . . . . . .	L Near	 00000007 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000013 Public STDCALL
 
 
 Symbols:
@@ -264,6 +268,7 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+str1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
