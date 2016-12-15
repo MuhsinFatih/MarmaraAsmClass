@@ -1,12 +1,12 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/08/16 16:58:52
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 13:57:28
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
 				TITLE Add and Subtract              (AddSub.asm)
-
+				
 				; This program adds and subtracts 32-bit integers.
 				; Last update: 2/1/02
-
+				
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -17,48 +17,49 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 			      C .NOLIST
 			      C .LIST
 			      C 
-
-
-
-
-
+				
+				
+				
+				
+				
  00000000			.data
-
-
+				
+					
  00000000			.code
- 00000000			main PROC
-
-					; signed multiplication
-					; imul x (r/m)
-
-					; x -> 8 bits
- 00000000  F6 EB			imul bl		; ax = bl * al
-
-					; x -> 16 bits
- 00000002  66| F7 E9			imul cx		; ax = cx * ax
-
-					; x -> 32 bits
- 00000005  F7 EF			imul edi	; edx:eax = edi * eax
-
-					; legal usages:
-					; imul x, y		(r/m) / (imm)
-					; x = x * y
-
-					; imul x, y, z	(r/m) / (r/m) / (imm)
-					; x = y * z
-
- 00000007  66| 6B C3 05			imul ax, bx, 5
-					imul edx, var3, 7
-lecture.asm(38) : error A2006: undefined symbol : var3
-
-					exit
-
- 00000012			main ENDP
+				
+				wchar MACRO x
+					push eax	mov al, x
+					call writechar	pop eaxENDM
+				
+				main PROC
+					
+					mov ecx, 10
+ 00000000				mov al, 97
+					start:
+ 00000000  B9 0000000A				wchar al
+ 00000005  B0 61				inc al
+ 00000007					loop start
+					
+ 00000007  50		     1		push eax
+ 00000008  8A C0	     1		mov al, al
+ 0000000A  E8 00000000 E     1		call writechar
+ 0000000F  58		     1		pop eax
+ 00000010  FE C0			exit
+ 00000012  E2 F3		
+				main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/08/16 16:58:52
+ 0000001B
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 13:57:28
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
+
+
+Macros:
+
+                N a m e                 Type
+
+wchar  . . . . . . . . . . . . .	Proc
 
 
 Structures and Unions:
@@ -104,7 +105,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000020 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000001B DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -172,7 +173,8 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000020 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+  start  . . . . . . . . . . . .	L Near	 00000007 _TEXT	
 
 
 Symbols:
@@ -266,4 +268,4 @@ white  . . . . . . . . . . . . .	Number	 0000000Fh
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
 	   0 Warnings
-	   1 Errors
+	   0 Errors

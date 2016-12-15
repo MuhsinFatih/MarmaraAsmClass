@@ -11,50 +11,25 @@ INCLUDE Irvine32.inc
 
 .data
 
-	money	dword	200,100,50,20,10,5,1
-	str1	byte	"Enter the money:",0
-	str2	byte	"Invalid number!",0
+	
 .code
+
+wchar MACRO x
+	push eax
+	mov al, x
+	call writechar
+	pop eax
+ENDM
+
 main PROC
 	
-call clrscr
-jmp don
-again:
-	call clrscr
-	mov edx, offset str2
-	call writestring
-	call crlf
-	
-don:
-	mov edx, offset str1
-	call writestring
-	call readint	;money in eax
-	call crlf
-
-	sub eax, 0
-	js again
-
-	mov ecx, lengthof money
-	mov ebx, 0
+	mov ecx, 10
+	mov al, 97
 	start:
-		mov edx, 0
-		div money[ebx]
-		
-		call writedec
-		mov al, 'x'
-		call writechar
-		mov eax, money[ebx]
-		call writedec
-		
-		call crlf
-		mov eax, edx
-		add ebx, 4
-
-
+		wchar al
+		inc al
 		loop start
 	
-	
-
 	exit
 
 main ENDP
