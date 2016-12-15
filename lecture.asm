@@ -7,7 +7,7 @@ INCLUDE Irvine32.inc
 
 INCLUDE Macros.inc
 
-
+findbigger PROTO fn: dword, sn: dword
 
 .data
 
@@ -25,22 +25,27 @@ main PROC
 	mwrite "Enter the second number: "
 	call readint		; second number in eax
 
-	call findbigger
+	invoke findbigger, eax, ebx
 
-	mwrite "The bigger one: "
-	call writeint
 
 	exit
 main ENDP
 
-findbigger PROC
-LOCAL fn: dword, sn: dword
-	mov fn, eax
-	cmp fn, ebx
+findbigger PROC fn: dword, sn: dword
+	push eax
+	push ebx
+	mov eax, fn
+	mov ebx, sn
+	
+	cmp eax, ebx
 	jge nothing
 	mov eax, ebx
 nothing:
-ret
+	mwrite "the bigger one: "
+	call writeint
+	pop ebx
+	pop eax
+	ret
 findbigger ENDP
 
 END main

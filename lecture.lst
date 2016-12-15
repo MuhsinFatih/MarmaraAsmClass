@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:16:49
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:23:13
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -23,7 +23,7 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 			      C .LIST
 			      C 
 				
-				
+				findbigger PROTO fn: dword, sn: dword
 				
  00000000			.data
 				
@@ -64,36 +64,41 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
  00000023  5A		     1		pop  edx
  00000024  E8 00000000 E		call readint		; second number in eax
 				
- 00000029  E8 00000018			call findbigger
+					invoke findbigger, eax, ebx
 				
-					mwrite "The bigger one: "
+				
+					exit
+ 00000037			main ENDP
+				
+ 00000037			findbigger PROC fn: dword, sn: dword
+ 0000003A  50				push eax
+ 0000003B  53				push ebx
+ 0000003C  8B 45 08			mov eax, fn
+ 0000003F  8B 5D 0C			mov ebx, sn
+					
+ 00000042  3B C3			cmp eax, ebx
+ 00000044  7D 02			jge nothing
+ 00000046  8B C3			mov eax, ebx
+ 00000048			nothing:
+					mwrite "the bigger one: "
  00000033		     1		.data				
- 00000033 54 68 65 20 62     1		??0002 BYTE "The bigger one: ",0		
+ 00000033 74 68 65 20 62     1		??0002 BYTE "the bigger one: ",0		
 	   69 67 67 65 72
 	   20 6F 6E 65 3A
 	   20 00
- 0000002E		     1		.code
- 0000002E  52		     1		push edx
- 0000002F  BA 00000033 R     1		mov  edx,OFFSET ??0002
- 00000034  E8 00000000 E     1		call Writestring
- 00000039  5A		     1		pop  edx
- 0000003A  E8 00000000 E		call writeint
-				
-					exit
- 00000046			main ENDP
-				
- 00000046			findbigger PROC
-				LOCAL fn: dword, sn: dword
- 0000004C  89 45 FC			mov fn, eax
- 0000004F  39 5D FC			cmp fn, ebx
- 00000052  7D 02			jge nothing
- 00000054  8B C3			mov eax, ebx
- 00000056			nothing:
-				ret
- 00000058			findbigger ENDP
+ 00000048		     1		.code
+ 00000048  52		     1		push edx
+ 00000049  BA 00000033 R     1		mov  edx,OFFSET ??0002
+ 0000004E  E8 00000000 E     1		call Writestring
+ 00000053  5A		     1		pop  edx
+ 00000054  E8 00000000 E		call writeint
+ 00000059  5B				pop ebx
+ 0000005A  58				pop eax
+					ret
+ 0000005F			findbigger ENDP
 				
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:16:49
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 15:23:13
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -161,7 +166,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000044 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000058 DWord	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005F DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -229,11 +234,11 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-findbigger . . . . . . . . . . .	P Near	 00000046 _TEXT	Length= 00000012 Public STDCALL
-  fn . . . . . . . . . . . . . .	DWord	 bp - 00000004
-  sn . . . . . . . . . . . . . .	DWord	 bp - 00000008
-  nothing  . . . . . . . . . . .	L Near	 00000056 _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000046 Public STDCALL
+findbigger . . . . . . . . . . .	P Near	 00000037 _TEXT	Length= 00000028 Public STDCALL
+  fn . . . . . . . . . . . . . .	DWord	 bp + 00000008
+  sn . . . . . . . . . . . . . .	DWord	 bp + 0000000C
+  nothing  . . . . . . . . . . .	L Near	 00000048 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000037 Public STDCALL
 
 
 Symbols:
