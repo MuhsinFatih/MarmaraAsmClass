@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:30:43
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:55:09
 Add and Subtract              (AddSub.asm)		     Page 1 - 1
 
 
@@ -18,66 +18,84 @@ Add and Subtract              (AddSub.asm)		     Page 1 - 1
 			      C .LIST
 			      C 
 				
-				
+				INCLUDE Macros.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
 				
 				
 				
  00000000			.data
 				
- 00000000 4D 65 73 73 61		msg1 byte "Message",0
-	   67 65 00
+					
  00000000			.code
+					
+					findbigger MACRO x, y
+						mov eax, x
+					cmp eax, y
+					jge nothing
+					mov eax, y
+				nothing:
 				
-				msgyaz MACRO adres
-					push edx	mov edx, offset adres
-					call writestring	pop edx
-				ENDM
+					ENDM
 				
-				write MACRO x
-					LOCAL str1	; This prevented the previous error	.data		str1 byte x,0
-				
-					.code		push edx		mov edx, offset str1
-						call writestring		pop edxENDM
 				
 				main PROC
-					write "This is written by a macro"
-					call crlf
-					write "another string"	; this will NOT throw an error
-					call crlf
-					msgyaz msg1
-					exit
+ 00000000				call clrscr
+ 00000000  E8 00000000 E		mwrite "Enter the first number: "
+					call readint
+ 00000000		     1		.data				
+ 00000000 45 6E 74 65 72     1		??0000 BYTE "Enter the first number: ",0		
+	   20 74 68 65 20
+	   66 69 72 73 74
+	   20 6E 75 6D 62
+	   65 72 3A 20 00
+ 00000005		     1		.code
+ 00000005  52		     1		push edx
+ 00000006  BA 00000000 R     1		mov  edx,OFFSET ??0000
+ 0000000B  E8 00000000 E     1		call Writestring
+ 00000010  5A		     1		pop  edx
+ 00000011  E8 00000000 E		mov ebx, eax		; first number in ebx
+ 00000016  8B D8			
+					mwrite "Enter the second number: "
+					call readint		; second number in eax
+ 00000019		     1		.data				
+ 00000019 45 6E 74 65 72     1		??0001 BYTE "Enter the second number: ",0		
+	   20 74 68 65 20
+	   73 65 63 6F 6E
+	   64 20 6E 75 6D
+	   62 65 72 3A 20
+	   00
+ 00000018		     1		.code
+ 00000018  52		     1		push edx
+ 00000019  BA 00000019 R     1		mov  edx,OFFSET ??0001
+ 0000001E  E8 00000000 E     1		call Writestring
+ 00000023  5A		     1		pop  edx
+ 00000024  E8 00000000 E	
+					findbigger eax, ebx
 				
+ 00000029  8B C0	     1		mov eax, eax
+ 0000002B  3B C3	     1		cmp eax, ebx
+ 0000002D  7D 02	     1		jge nothing
+ 0000002F  8B C3	     1		mov eax, ebx
+ 00000031		     1	nothing:
+					mwrite "The bigger one: "
+					call writeint
+ 00000033		     1		.data				
+ 00000033 54 68 65 20 62     1		??0002 BYTE "The bigger one: ",0		
+	   69 67 67 65 72
+	   20 6F 6E 65 3A
+	   20 00
+ 00000031		     1		.code
+ 00000031  52		     1		push edx
+ 00000032  BA 00000033 R     1		mov  edx,OFFSET ??0002
+ 00000037  E8 00000000 E     1		call Writestring
+ 0000003C  5A		     1		pop  edx
+ 0000003D  E8 00000000 E	
+					exit
 				main ENDP
- 00000000			END main
- 00000008		     1		.data
- 00000008 54 68 69 73 20     1			??0000 byte "This is written by a macro",0
-	   69 73 20 77 72
-	   69 74 74 65 6E
-	   20 62 79 20 61
-	   20 6D 61 63 72
-	   6F 00
- 00000000		     1		.code
- 00000000  52		     1			push edx
- 00000001  BA 00000008 R     1			mov edx, offset ??0000
- 00000006  E8 00000000 E     1			call writestring
- 0000000B  5A		     1			pop edx
- 0000000C  E8 00000000 E
- 00000023		     1		.data
- 00000023 61 6E 6F 74 68     1			??0001 byte "another string",0
-	   65 72 20 73 74
-	   72 69 6E 67 00
- 00000011		     1		.code
- 00000011  52		     1			push edx
- 00000012  BA 00000023 R     1			mov edx, offset ??0001
- 00000017  E8 00000000 E     1			call writestring
- 0000001C  5A		     1			pop edx
- 0000001D  E8 00000000 E
- 00000022  52		     1		push edx
- 00000023  BA 00000000 R     1		mov edx, offset msg1
- 00000028  E8 00000000 E     1		call writestring
- 0000002D  5A		     1		pop edx
- 00000035
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:30:43
+ 00000049			END main
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/15/16 14:55:09
 Add and Subtract              (AddSub.asm)		     Symbols 2 - 1
 
 
@@ -87,8 +105,20 @@ Macros:
 
                 N a m e                 Type
 
-msgyaz . . . . . . . . . . . . .	Proc
-write  . . . . . . . . . . . . .	Proc
+IsDefined  . . . . . . . . . . .	Func
+NewLine  . . . . . . . . . . . .	Proc
+ShowFlag . . . . . . . . . . . .	Proc
+ShowRegister . . . . . . . . . .	Proc
+Startup  . . . . . . . . . . . .	Proc
+WriteSpace . . . . . . . . . . .	Proc
+findbigger . . . . . . . . . . .	Proc
+mDumpMem . . . . . . . . . . . .	Proc
+mGotoxy  . . . . . . . . . . . .	Proc
+mNewLine . . . . . . . . . . . .	Proc
+mReadStr . . . . . . . . . . . .	Proc
+mWriteLn . . . . . . . . . . . .	Proc
+mWriteStr  . . . . . . . . . . .	Proc
+mWrite . . . . . . . . . . . . .	Proc
 
 
 Structures and Unions:
@@ -133,8 +163,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000032 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000035 DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000044 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000049 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -202,15 +232,17 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000035 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000049 Public STDCALL
+  nothing  . . . . . . . . . . .	L Near	 00000031 _TEXT	
 
 
 Symbols:
 
                 N a m e                 Type     Value    Attr
 
-??0000 . . . . . . . . . . . . .	Byte	 00000008 _DATA	
-??0001 . . . . . . . . . . . . .	Byte	 00000023 _DATA	
+??0000 . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+??0001 . . . . . . . . . . . . .	Byte	 00000019 _DATA	
+??0002 . . . . . . . . . . . . .	Byte	 00000033 _DATA	
 @CodeSize  . . . . . . . . . . .	Number	 00000000h   
 @DataSize  . . . . . . . . . . .	Number	 00000000h   
 @Interface . . . . . . . . . . .	Number	 00000003h   
@@ -293,7 +325,6 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-msg1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

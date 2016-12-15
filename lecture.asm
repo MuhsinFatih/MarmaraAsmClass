@@ -5,42 +5,40 @@ TITLE Add and Subtract              (AddSub.asm)
 
 INCLUDE Irvine32.inc
 
-
+INCLUDE Macros.inc
 
 
 
 .data
 
-	msg1 byte "Message",0
+	
 .code
+	
+	findbigger MACRO x, y
+	
+	mov eax, x
+	cmp eax, y
+	jge nothing
+	mov eax, y
+nothing:
 
-msgyaz MACRO adres
-	push edx
-	mov edx, offset adres
-	call writestring
-	pop edx
+	ENDM
 
-ENDM
-
-write MACRO x
-	LOCAL str1	; This prevented the previous error
-	.data
-		str1 byte x,0
-
-	.code
-		push edx
-		mov edx, offset str1
-		call writestring
-		pop edx
-ENDM
 
 main PROC
-	write "This is written by a macro"
-	call crlf
-	write "another string"	; this will NOT throw an error
-	call crlf
-	msgyaz msg1
-	exit
+	call clrscr
+	mwrite "Enter the first number: "
+	call readint
+	mov ebx, eax		; first number in ebx
+	
+	mwrite "Enter the second number: "
+	call readint		; second number in eax
 
+	findbigger eax, ebx
+
+	mwrite "The bigger one: "
+	call writeint
+
+	exit
 main ENDP
 END main
