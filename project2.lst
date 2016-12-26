@@ -1,13 +1,11 @@
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/14/16 22:17:35
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/26/16 09:07:54
 Program Template     (template.asm)			     Page 1 - 1
 
 
 				TITLE Program Template     (template.asm)
-
-				; Program Description:
-				; Author:
-				; Date Created:
-				; Last Modification Date:
+				; Project2
+				; Muhsin Fatih Yorulmaz
+				; 150714007
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -19,105 +17,793 @@ Program Template     (template.asm)			     Page 1 - 1
 			      C .NOLIST
 			      C .LIST
 			      C 
-
-				; (insert symbol definitions here)
+				INCLUDE Macros.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
 
  00000000			.data
- 00000000 65 6E 74 65 72	str1 byte "enter string",0
-	   20 73 74 72 69
-	   6E 67 00
- 0000000D 00			str2 byte   11 dup(0),0
- 00000019 20 65 6E 74 65	str3 byte " enter bwt 3-10",0
-	   72 20 62 77 74
-	   20 33 2D 31 30
-	   00
- 00000029  00000190 [		array byte 400 dup(0),0
+ = 00000014			matrixSize EQU 20							;for easier change later. For example for matrix size = 20 -> matrix is 20x20
+				; matrix[ebx + edi]	==> matrix[i + j]	;more readable
+ = ebx				i EQU ebx
+ = edi				j EQU edi
+ = esi				k EQU esi
+
+ 00000000 7E 57 68 61 74	prompt1		byte		"~What do you want to find in this matrix?", 0ah, "~I want to find: ",0
+	   20 64 6F 20 79
+	   6F 75 20 77 61
+	   6E 74 20 74 6F
+	   20 66 69 6E 64
+	   20 69 6E 20 74
+	   68 69 73 20 6D
+	   61 74 72 69 78
+	   3F 0A 7E 49 20
+	   77 61 6E 74 20
+	   74 6F 20 66 69
+	   6E 64 3A 20 00
+ 0000003C  00000080 [		input		byte		128 dup(0),0	; input size of 128 at max
 	    00
 	   ] 00
- 000001BA  00000014 [		matrix byte 20 dup(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),0
-	    01 01 01 01
-	    01 01 01 01
-	    01 01 01 01
-	    01 01 01 01
-	    01 01 01 01
-	    01
+ 000000BD 00000000		Linput		dword		0					; input length
+ 000000C1  00000014 [		matrix		byte		matrixSize dup(matrixSize dup(0)),0
+	    00000014 [
+	     00
+	    ]
 	   ] 00
- 00000000			.code
- 00000000			main PROC
- 00000000  E8 00000000 E	call clrscr
+ 00000252  00000014 [		colors		byte		matrixSize dup(matrixSize dup(lightgray)),0
+	    00000014 [
+	     07
+	    ]
+	   ] 00
+ 000003E3 6D 75 68 73 69	muhsinfatih	byte		"muhsinfatih",0
+	   6E 66 61 74 69
+	   68 00
+ 000003EF 68 69 74 61 66	hitafnishum	byte		"hitafnishum",0		; 'muhsinfatih' in reverse order
+	   6E 69 73 68 75
+	   6D 00
+ 000003FB  00003A98 [		clrScrByte	byte		15000 dup(" "),0	; to further clear screen
+	    20
+	   ] 00
+ 00003E94 00000000		occurances	dword		0
+ 00003E98 54 68 65 72 65	conclusion	byte		"There are ",0
+	   20 61 72 65 20
+	   00
+ 00003EA3 20 6F 63 63 75	conc2		byte		" occurance(s) of your input in the matrix",0
+	   72 61 6E 63 65
+	   28 73 29 20 6F
+	   66 20 79 6F 75
+	   72 20 69 6E 70
+	   75 74 20 69 6E
+	   20 74 68 65 20
+	   6D 61 74 72 69
+	   78 00
+
+ 00000000			.code ; ************** code **************
 
 
- 00000005  E8 00000000 E	call randomize 
-				;mov ebx,01
- 0000000A  B9 00000014		mov ecx,20
+				readstr MACRO str
+					push ecx
+					mov edx, offset str
+					mov ecx, lengthof str-1
+					call readstring
+					pop ecx
+				ENDM
+				endfor MACRO goto					; same as loop but only doesn't throw jump dest too far error
+					dec ecx
+					jne goto
+				ENDM
+				printdec MACRO decimal
+					push eax
+					mov eax, decimal
+					call writedec
+					pop eax
+				ENDM
+
+ 00000000			printMatrix PROC
+ 00000000  E8 00000000 E	call crlf
+ 00000005  B8 00000000		mov eax, 0
+ 0000000A  B9 00000014		mov ecx, matrixSize
+ 0000000F  BB 00000000		mov i, 0
+ 00000014			printloop:
+ 00000014  51				push ecx
+ 00000015  B9 00000014			mov ecx, matrixSize
+ 0000001A  BF 00000000			mov j,0
+ 0000001F				printloop2:
+ 0000001F  8A 84 1F				mov al, colors[i + j]
+	   00000252 R
+ 00000026  E8 00000000 E			call settextcolor
+ 0000002B  8A 84 1F				mov al, matrix[i + j]
+	   000000C1 R
+ 00000032  E8 00000000 E			call writechar
+ 00000037  B0 20				mov al, " "
+ 00000039  E8 00000000 E			call writechar
+ 0000003E  47					inc j
+ 0000003F  E2 DE				loop printloop2
+ 00000041  E8 00000000 E		call crlf
+ 00000046  83 C3 14			add i, matrixSize
+ 00000049  59				pop ecx
+ 0000004A  E2 C8			loop printloop
+
+ 0000004C  B0 07			mov al, lightgray
+ 0000004E  E8 00000000 E		call settextcolor
+ 00000053  C3				ret	;hahah. i figured out that if I uncomment this, I get the matrix in THE MATRIX movie :D
+ 00000054			printMatrix ENDP
 
 
+ 00000054			main PROC
 
- 0000000F			outerloop:
- 0000000F  51				push ecx
- 00000010  B9 00000014			mov ecx,20
- 00000015  BA 00000000			mov edx, 0
- 0000001A				start1:
- 0000001A  B8 0000001A				mov eax,26
- 0000001F  E8 00000000 E			call randomrange
- 00000024  83 C0 61				add eax,97
 
- 00000027				cnt:
- 00000027  88 82 000001BA R			mov byte ptr matrix[edx], al
+ 00000054  B8 0000000B		mov eax, lightCyan
+ 00000059  E8 00000000 E	call settextcolor
 
- 0000002D  E8 00000000 E			call writechar
- 00000032  B0 20				mov al,' '
- 00000034  E8 00000000 E			call writechar
- 00000039  42					inc edx
- 0000003A  E2 DE				loop start1
+ 0000005E  E8 00000000 E	call clrscr
+ 00000063  E8 00000000 E	call crlf
+				mwrite "	Find the Word Game"
+ 00003ECD		     1		.data				
+ 00003ECD 09 46 69 6E 64     1		??0000 BYTE "	Find the Word Game",0		
+	   20 74 68 65 20
+	   57 6F 72 64 20
+	   47 61 6D 65 00
+ 00000068		     1		.code
+ 00000068  52		     1		push edx
+ 00000069  BA 00003ECD R     1		mov  edx,OFFSET ??0000
+ 0000006E  E8 00000000 E     1		call Writestring
+ 00000073  5A		     1		pop  edx
+ 00000074  E8 00000000 E	call crlf
+
+ 00000079  B8 00000007		mov eax, lightgray
+ 0000007E  E8 00000000 E	call settextcolor
+
+ 00000083  E8 00000000 E	call randomize						; make sure randoms are actually random
+
+				; build the matrix
+ 00000088  BB 00000000		mov i, 0							; i = 0
+ 0000008D  B9 00000014		mov ecx, matrixSize					; while(i < matrixSize * matrixSize)
+ 00000092			outerloop:
+ 00000092  51				push ecx						; preserve i
+ 00000093  BF 00000000			mov j, 0						; j = 0
+ 00000098  B9 00000014			mov ecx, matrixSize				; while(j < matrixSize)
+ 0000009D				start1:
+						; generate random lowercase char
+ 0000009D  B8 0000001A				mov eax,26
+ 000000A2  E8 00000000 E			call randomrange
+ 000000A7  83 C0 61				add eax,97
+ 000000AA  88 84 1F				mov byte ptr matrix[i + j], al	; save the char to matrix
+	   000000C1 R
+
+ 000000B1  47					inc j
+ 000000B2  E2 E9				loop start1					; end for
+					; call crlf
 					
- 0000003C  59				pop ecx
-
- 0000003D  E8 00000000 E		call crlf
- 00000042  42				inc edx
- 00000043  E2 CA			loop outerloop
+ 000000B4  59				pop ecx
+ 000000B5  83 C3 14			add i, matrixSize
+ 000000B8  E2 D8			loop outerloop					; end for
 
 
- 00000045  BA 000001BA R	mov edx, offset matrix
- 0000004A  83 C2 15		add edx, 21
- 0000004D  E8 00000000 E	call writestring
- 00000052  E8 00000000 E	call crlf
+ 000000BA  B8 00000014		mov eax, matrixSize
+ 000000BF  83 F8 13		cmp eax, 19
+ 000000C2  0F 82 0000008E	jb skiptest
+				; for testing, fill 'muhsinfatih' in matrix 6 times in fixed positions
+ 000000C8  BE 000003E3 R	mov esi, offset muhsinfatih
+ 000000CD  B9 0000000B		mov ecx, 11
+ 000000D2  BF 000000EE R	mov edi, offset matrix[matrixSize * 2 + 5]
+ 000000D7  F3/ A4		REP MOVSB
 
- 00000057  BA 00000000 R	mov edx,offset str1
- 0000005C  E8 00000000 E	call writestring
- 00000061  B8 00000000		mov eax,0
- 00000066  BA 0000000D R	mov edx, offset str2
- 0000006B  B9 0000000B		mov ecx, lengthof str2-1
- 00000070  E8 00000000 E	call readstring
- 00000075  8B D8		mov ebx ,eax
- 00000077  83 F8 03		cmp eax,3
- 0000007A  77 11		ja cont1
+ 000000D9  BE 000003EF R	mov esi, offset hitafnishum
+ 000000DE  B9 0000000B		mov ecx, 11
+ 000000E3  BF 00000112 R	mov edi, offset matrix[matrixSize * 4 + 1]
+ 000000E8  F3/ A4		REP MOVSB
 
- 0000007C  BA 00000019 R	mov edx,offset str3
- 00000081  E8 00000000 E	call writestring
-				exit
- 0000008D  83 F8 0A		cont1: cmp eax,10
- 00000090  72 11		jb cont2
+ 000000EA  BE 000003E3 R	mov esi, offset muhsinfatih
+ 000000EF  B9 0000000B		mov ecx, 11
+ 000000F4  BF 0000013A R	mov edi, offset matrix[matrixSize * 6 + 1]
+ 000000F9  F3/ A4		REP MOVSB
 
- 00000092  BA 00000019 R	mov edx,offset str3
- 00000097  E8 00000000 E	call writestring
-				exit
- 000000A3			cont2:
-					;eax uzunluk edx kelime
+ 000000FB  BE 000003EF R	mov esi, offset hitafnishum
+ 00000100  B9 0000000B		mov ecx, 11
+ 00000105  BF 000001ED R	mov edi, offset matrix[matrixSize * 15]
+ 0000010A  F3/ A4		REP MOVSB
+
+ 0000010C  B9 0000000B		mov ecx, 11
+ 00000111  BB 00000014		mov i, matrixSize
+ 00000116  6B DB 08		imul i, 8
+ 00000119  BF 00000000		mov j, 0
+ 0000011E			crosstest:
+ 0000011E  8A 87 000003E3 R		mov al, muhsinfatih[j]
+ 00000124  88 84 1F			mov matrix[i + j + 5], al
+	   000000C6 R
+ 0000012B  83 C3 14			add i, matrixSize
+ 0000012E  47				inc j
+ 0000012F  E2 ED			loop crosstest
+
+ 00000131  B9 0000000B		mov ecx, 11
+ 00000136  BB 00000014		mov i, matrixSize
+ 0000013B  6B DB 07		imul i, 7
+ 0000013E  BF 00000000		mov j, 0
+ 00000143			crosstest2:
+ 00000143  8A 87 000003E3 R		mov al, muhsinfatih[j]
+ 00000149  88 84 1F			mov matrix[i + j + 7], al
+	   000000C8 R
+ 00000150  83 C3 14			add i, matrixSize
+ 00000153  47				inc j
+ 00000154  E2 ED			loop crosstest2
+
+				; --------------------------------------------------------------------
+ 00000156			skiptest:
+				invoke printMatrix
+ 0000015B  E8 00000000 E	call crlf
+				mwrite "(Can you see muhsinfatih's in the matrix? There are 6 of them :) )"
+ 00003EE1		     1		.data				
+ 00003EE1 28 43 61 6E 20     1		??0001 BYTE "(Can you see muhsinfatih's in the matrix? There are 6 of them :) )",0		
+	   79 6F 75 20 73
+	   65 65 20 6D 75
+	   68 73 69 6E 66
+	   61 74 69 68 27
+	   73 20 69 6E 20
+	   74 68 65 20 6D
+	   61 74 72 69 78
+	   3F 20 54 68 65
+	   72 65 20 61 72
+	   65 20 36 20 6F
+	   66 20 74 68 65
+	   6D 20 3A 29 20
+	   29 00
+ 00000160		     1		.code
+ 00000160  52		     1		push edx
+ 00000161  BA 00003EE1 R     1		mov  edx,OFFSET ??0001
+ 00000166  E8 00000000 E     1		call Writestring
+ 0000016B  5A		     1		pop  edx
+ 0000016C			prompt:
+ 0000016C  B8 00000007		mov eax, lightgray
+ 00000171  E8 00000000 E	call settextcolor
+ 00000176  E8 00000000 E	call crlf
+				; prompt user to enter text
+ 0000017B  BA 00000000 R	mov edx,offset prompt1
+ 00000180  E8 00000000 E	call writestring
+
+				readstr input						; read input
+ 00000185  51		     1		push ecx
+ 00000186  BA 0000003C R     1		mov edx, offset input
+ 0000018B  B9 00000080	     1		mov ecx, lengthof input-1
+ 00000190  E8 00000000 E     1		call readstring
+ 00000195  59		     1		pop ecx
+ 00000196  A3 000000BD R	mov Linput, eax						; store input size
+ 0000019B  50			push eax
+
+				; check if input is valid
+ 0000019C  83 F8 03		cmp eax, 3
+ 0000019F  73 2C		jae valid1
+ 000001A1  B8 0000000C		mov eax, lightRed
+ 000001A6  E8 00000000 E	call settextcolor
+				mwrite "Please enter least 3 characters"
+ 00003F24		     1		.data				
+ 00003F24 50 6C 65 61 73     1		??0002 BYTE "Please enter least 3 characters",0		
+	   65 20 65 6E 74
+	   65 72 20 6C 65
+	   61 73 74 20 33
+	   20 63 68 61 72
+	   61 63 74 65 72
+	   73 00
+ 000001AB		     1		.code
+ 000001AB  52		     1		push edx
+ 000001AC  BA 00003F24 R     1		mov  edx,OFFSET ??0002
+ 000001B1  E8 00000000 E     1		call Writestring
+ 000001B6  5A		     1		pop  edx
+ 000001B7  E8 00000000 E	call crlf
+ 000001BC  B8 00000007		mov eax, lightgray
+ 000001C1  E8 00000000 E	call settextcolor
+ 000001C6  EB A4		jmp prompt
+ 000001C8  E8 00000000 E	call crlf
+
+ 000001CD			valid1:
+
+ 000001CD  58			pop eax
+ 000001CE  83 F8 14		cmp eax, matrixSize
+ 000001D1  72 42		jb valid2
+ 000001D3  B8 0000000C		mov eax, lightRed
+ 000001D8  E8 00000000 E	call settextcolor
+				mwrite "Input is longer than matrix dimensions. Enter less than "
+ 00003F44		     1		.data				
+ 00003F44 49 6E 70 75 74     1		??0003 BYTE "Input is longer than matrix dimensions. Enter less than ",0		
+	   20 69 73 20 6C
+	   6F 6E 67 65 72
+	   20 74 68 61 6E
+	   20 6D 61 74 72
+	   69 78 20 64 69
+	   6D 65 6E 73 69
+	   6F 6E 73 2E 20
+	   45 6E 74 65 72
+	   20 6C 65 73 73
+	   20 74 68 61 6E
+	   20 00
+ 000001DD		     1		.code
+ 000001DD  52		     1		push edx
+ 000001DE  BA 00003F44 R     1		mov  edx,OFFSET ??0003
+ 000001E3  E8 00000000 E     1		call Writestring
+ 000001E8  5A		     1		pop  edx
+ 000001E9  B8 00000014		mov eax, matrixSize
+ 000001EE  E8 00000000 E	call writedec
+				mwrite " chars."
+ 00003F7D		     1		.data				
+ 00003F7D 20 63 68 61 72     1		??0004 BYTE " chars.",0		
+	   73 2E 00
+ 000001F3		     1		.code
+ 000001F3  52		     1		push edx
+ 000001F4  BA 00003F7D R     1		mov  edx,OFFSET ??0004
+ 000001F9  E8 00000000 E     1		call Writestring
+ 000001FE  5A		     1		pop  edx
+ 000001FF  B8 00000007		mov eax, lightgray
+ 00000204  E8 00000000 E	call settextcolor
+ 00000209  C6 05 0000003C R	mov input, 0 ; fix the input
+	   00
+
+ 00000210  E9 FFFFFF57		jmp prompt
+
+ 00000215			valid2:
+ 00000215  BB 00000000		mov ebx, 0
+ 0000021A  8B 0D 000000BD R	mov ecx, Linput
+ 00000220  BE 00000000		mov esi, 0
+ 00000225			lcase:
+ 00000225  80 8E 0000003C R		or input[esi], 020h		; convert string to lowercase
+	   20
+ 0000022C  8A 9E 0000003C R		mov bl, input[esi]
+ 00000232  80 FB 61			cmp bl, 97
+ 00000235  73 20			jae valid3
+
+					;call writedec
+ 00000237  B8 0000000C			mov eax, lightred
+ 0000023C  E8 00000000 E		call settextcolor
+					mwrite "Invalid character. Only letters are allowed"
+ 00003F85		     1		.data				
+ 00003F85 49 6E 76 61 6C     1		??0005 BYTE "Invalid character. Only letters are allowed",0		
+	   69 64 20 63 68
+	   61 72 61 63 74
+	   65 72 2E 20 4F
+	   6E 6C 79 20 6C
+	   65 74 74 65 72
+	   73 20 61 72 65
+	   20 61 6C 6C 6F
+	   77 65 64 00
+ 00000241		     1		.code
+ 00000241  52		     1		push edx
+ 00000242  BA 00003F85 R     1		mov  edx,OFFSET ??0005
+ 00000247  E8 00000000 E     1		call Writestring
+ 0000024C  5A		     1		pop  edx
+ 0000024D  E8 00000000 E		call crlf
+ 00000252  E9 FFFFFF15			jmp prompt
+					
+ 00000257				valid3:
+					
+ 00000257  80 FB 7A			cmp bl, 122
+ 0000025A  76 20			jbe valid4
+ 0000025C  B8 0000000C			mov eax, lightred
+ 00000261  E8 00000000 E		call settextcolor
+					mwrite "Invalid character. Only letters are allowed"
+ 00003FB1		     1		.data				
+ 00003FB1 49 6E 76 61 6C     1		??0006 BYTE "Invalid character. Only letters are allowed",0		
+	   69 64 20 63 68
+	   61 72 61 63 74
+	   65 72 2E 20 4F
+	   6E 6C 79 20 6C
+	   65 74 74 65 72
+	   73 20 61 72 65
+	   20 61 6C 6C 6F
+	   77 65 64 00
+ 00000266		     1		.code
+ 00000266  52		     1		push edx
+ 00000267  BA 00003FB1 R     1		mov  edx,OFFSET ??0006
+ 0000026C  E8 00000000 E     1		call Writestring
+ 00000271  5A		     1		pop  edx
+ 00000272  E8 00000000 E		call crlf
+ 00000277  E9 FFFFFEF0			jmp prompt
+					
+ 0000027C				valid4:
+					
+ 0000027C  46				inc esi
+ 0000027D  E2 A6			loop lcase
 
 
 
 
-					exit	
- 000000AA			main ENDP
 
-				; (insert additional procedures here)
+				; *** begin search ***
+
+ 0000027F  BB 00000000		mov i, 0
+ 00000284  B9 00000014		mov ecx, matrixSize
+ 00000289			for1:
+ 00000289  51				push ecx
+ 0000028A  BF 00000000			mov j, 0
+ 0000028F  B9 00000014			mov ecx, matrixSize
+ 00000294				for2:
+ 00000294  51					push ecx
+						
+						; check if the first character matches
+ 00000295  0F B6 84 1F				movzx eax, matrix[i + j]
+	   000000C1 R
+ 0000029D  3A 05 0000003C R			cmp al, input	; no offset ==> first char
+ 000002A3  0F 85 0000010B			jne noMatch		; continue. no match at all
+
+
+						; linear search
+
+ 000002A9  8B EF				mov ebp, j
+ 000002AB  03 2D 000000BD R			add ebp, Linput
+ 000002B1  83 FD 14				cmp ebp, matrixSize
+ 000002B4  77 3C				ja noMatch1		; input length > remaining columns
+
+						
+ 000002B6  8B 0D 000000BD R			mov ecx, Linput	; while (j < input length)
+ 000002BC  57					push j
+ 000002BD  8B F7				mov k, j
+ 000002BF					for3:
+ 000002BF  8A 84 1F					mov al, matrix[i + j]
+	   000000C1 R
+ 000002C6  2B FE					sub j, k
+ 000002C8  3A 87 0000003C R				cmp al, input[j]
+							
+ 000002CE  74 03					je match
+ 000002D0  5F						pop j
+ 000002D1  EB 1F					jmp noMatch1
+ 000002D3						match:
+ 000002D3  03 FE					add j, k
+ 000002D5  47						inc j
+ 000002D6  E2 E7					loop for3
+						
+						
+						; found! add color to color table
+ 000002D8  FF 05 00003E94 R			inc occurances
+ 000002DE  8B 0D 000000BD R			mov ecx, Linput
+ 000002E4  8B FE				mov j, k
+ 000002E6					for4:
+ 000002E6  C6 84 1F					mov colors[i + j], lightGreen
+	   00000252 R 0A
+ 000002EE  47						inc j
+ 000002EF  E2 F5					loop for4
+						
+ 000002F1  5F					pop j
+
+
+
+
+
+
+ 000002F2					noMatch1:	; did not find linear match
+
+						; linear backwards search
+
+ 000002F2  8B EF				mov ebp, j
+ 000002F4  2B 2D 000000BD R			sub ebp, Linput
+ 000002FA  83 FD FF				cmp ebp, -1		; Linput - 1
+ 000002FD  7C 3F				jl noMatch2		; input length > remaining columns on the left
+
+						
+ 000002FF  8B 0D 000000BD R			mov ecx, Linput	; while (j < input length)
+ 00000305  57					push j
+ 00000306  BE 00000000				mov k, 0
+ 0000030B					for1_3:
+ 0000030B  8A 84 1F					mov al, matrix[i + j]
+	   000000C1 R
+ 00000312  2B FE					sub j, k
+
+							
+ 00000314  3A 86 0000003C R				cmp al, input[k]
+							
+
+ 0000031A  74 03					je match2
+ 0000031C  5F						pop j
+ 0000031D  EB 1F					jmp noMatch2
+ 0000031F						match2:
+							
+ 0000031F  03 FE					add j, k
+ 00000321  4F						dec j
+ 00000322  46						inc k
+ 00000323  E2 E6					loop for1_3
+						
+						
+						; found! add color to color table
+ 00000325  FF 05 00003E94 R			inc occurances
+ 0000032B  8B 0D 000000BD R			mov ecx, Linput
+ 00000331  47					inc j
+ 00000332					for1_4:
+ 00000332  C6 84 1F					mov colors[i + j], lightRed
+	   00000252 R 0C
+ 0000033A  47						inc j
+ 0000033B  E2 F5					loop for1_4
+						
+ 0000033D  5F					pop j
+
+
+ 0000033E					noMatch2:
+
+						
+
+						; cross search
+
+ 0000033E  8B EF				mov ebp, j
+ 00000340  03 2D 000000BD R			add ebp, Linput
+ 00000346  83 FD 14				cmp ebp, matrixSize
+ 00000349  77 69				ja noMatch		; input length > remaining columns
+						
+						
+ 0000034B  BA 00000000				mov edx, 0
+ 00000350  8B C3				mov eax, i
+ 00000352  BD 00000014				mov ebp, matrixSize
+ 00000357  F7 F5				div ebp			; divide i by matrixSize
+						
+ 00000359  8B E8				mov ebp, eax
+ 0000035B  03 2D 000000BD R			add ebp, Linput
+ 00000361  E8 00000000 E			call crlf
+ 00000366  83 FD 14				cmp ebp, matrixSize
+
+ 00000369  77 49				ja noMatch; input length > remaining rows
+						
+
+						
+
+ 0000036B  8B 0D 000000BD R			mov ecx, Linput	; while (j < input length)
+ 00000371  57					push j
+ 00000372  8B EB				mov ebp, i		; store i in ebp to use for coloring
+ 00000374  53					push i
+ 00000375  8B F7				mov k, j
+ 00000377					for2_3:
+ 00000377  8A 84 1F					mov al, matrix[i + j]
+	   000000C1 R
+ 0000037E  2B FE					sub j, k
+ 00000380  3A 87 0000003C R				cmp al, input[j]
+							
+ 00000386  74 04					je match3
+							
+ 00000388  5B						pop i
+ 00000389  5F						pop j
+ 0000038A  EB 28					jmp noMatch
+ 0000038C						match3:
+							;mwrite "match"
+ 0000038C  03 FE					add j, k
+ 0000038E  47						inc j
+ 0000038F  83 C3 14					add i, matrixSize
+ 00000392  E2 E3					loop for2_3
+						
+						
+						; found! add color to color table
+ 00000394  FF 05 00003E94 R			inc occurances
+ 0000039A  8B 0D 000000BD R			mov ecx, Linput
+ 000003A0  8B FE				mov j, k
+ 000003A2  8B DD				mov i, ebp		; get i back to first index
+ 000003A4					for2_4:
+ 000003A4  C6 84 1F					mov colors[i + j], yellow
+	   00000252 R 0E
+ 000003AC  47						inc j
+ 000003AD  83 C3 14					add i, matrixSize
+ 000003B0  E2 F2					loop for2_4
+						
+ 000003B2  5B					pop i
+ 000003B3  5F					pop j
+						
+
+
+
+ 000003B4					noMatch:	; no match at all
+ 000003B4  59					pop ecx
+ 000003B5  47					inc j
+						endfor for2
+ 000003B6  49		     1		dec ecx
+ 000003B7  0F 85 FFFFFED7    1		jne for2
+ 000003BD  59				pop ecx
+ 000003BE  83 C3 14			add i, matrixSize
+					endfor for1
+ 000003C1  49		     1		dec ecx
+ 000003C2  0F 85 FFFFFEC1    1		jne for1
+
+
+ 000003C8  E8 00000000 E	call clrscr
+ 000003CD  BA 000003FB R	mov edx, offset clrScrByte
+ 000003D2  E8 00000000 E	call writestring			; make sure screen is actually cleared (sort of..)
+ 000003D7  E8 00000000 E	call clrscr
+
+ 000003DC  B8 0000000B		mov eax, lightCyan
+ 000003E1  E8 00000000 E	call settextcolor
+
+ 000003E6  E8 00000000 E	call crlf
+				mwrite "	Find the Word Game"
+ 00003FDD		     1		.data				
+ 00003FDD 09 46 69 6E 64     1		??0007 BYTE "	Find the Word Game",0		
+	   20 74 68 65 20
+	   57 6F 72 64 20
+	   47 61 6D 65 00
+ 000003EB		     1		.code
+ 000003EB  52		     1		push edx
+ 000003EC  BA 00003FDD R     1		mov  edx,OFFSET ??0007
+ 000003F1  E8 00000000 E     1		call Writestring
+ 000003F6  5A		     1		pop  edx
+ 000003F7  E8 00000000 E	call crlf
+
+ 000003FC  B8 00000007		mov eax, lightgray
+ 00000401  E8 00000000 E	call settextcolor
+
+				; print the matrix
+				invoke printMatrix
+
+ 0000040B  B8 0000000B		mov eax, lightCyan
+ 00000410  E8 00000000 E	call settextcolor
+
+ 00000415  E8 00000000 E	call crlf
+ 0000041A  BA 00003E98 R	mov edx, offset conclusion
+ 0000041F  E8 00000000 E	call writestring
+				printdec occurances
+ 00000424  50		     1		push eax
+ 00000425  A1 00003E94 R     1		mov eax, occurances
+ 0000042A  E8 00000000 E     1		call writedec
+ 0000042F  58		     1		pop eax
+ 00000430  BA 00003EA3 R	mov edx, offset conc2
+ 00000435  E8 00000000 E	call writestring
+
+ 0000043A  B8 00000007		mov eax, lightGray
+ 0000043F  E8 00000000 E	call settextcolor
+ 00000444  E8 00000000 E	call crlf
+ 00000449  E8 00000000 E	call crlf
+				mwrite "Note: This matrix is scalable. You can go to code and change the matrixSize constant. It works on all sizes. However there are no prewritten muhsinfatih's in matrix smaller than 19x19 matrices"
+ 00003FF1		     1		.data				
+ 00003FF1 4E 6F 74 65 3A     1		??0008 BYTE "Note: This matrix is scalable. You can go to code and change the matrixSize constant. It works on all sizes. However there are no prewritten muhsinfatih's in matrix smaller than 19x19 matrices",0		
+	   20 54 68 69 73
+	   20 6D 61 74 72
+	   69 78 20 69 73
+	   20 73 63 61 6C
+	   61 62 6C 65 2E
+	   20 59 6F 75 20
+	   63 61 6E 20 67
+	   6F 20 74 6F 20
+	   63 6F 64 65 20
+	   61 6E 64 20 63
+	   68 61 6E 67 65
+	   20 74 68 65 20
+	   6D 61 74 72 69
+	   78 53 69 7A 65
+	   20 63 6F 6E 73
+	   74 61 6E 74 2E
+	   20 49 74 20 77
+	   6F 72 6B 73 20
+	   6F 6E 20 61 6C
+	   6C 20 73 69 7A
+	   65 73 2E 20 48
+	   6F 77 65 76 65
+	   72 20 74 68 65
+	   72 65 20 61 72
+	   65 20 6E 6F 20
+	   70 72 65 77 72
+	   69 74 74 65 6E
+	   20 6D 75 68 73
+	   69 6E 66 61 74
+	   69 68 27 73 20
+	   69 6E 20 6D 61
+	   74 72 69 78 20
+	   73 6D 61 6C 6C
+	   65 72 20 74 68
+	   61 6E 20 31 39
+	   78 31 39 20 6D
+	   61 74 72 69 63
+	   65 73 00
+ 0000044E		     1		.code
+ 0000044E  52		     1		push edx
+ 0000044F  BA 00003FF1 R     1		mov  edx,OFFSET ??0008
+ 00000454  E8 00000000 E     1		call Writestring
+ 00000459  5A		     1		pop  edx
+
+ 0000045A  8B 0D 00003E94 R	mov ecx, occurances
+ 00000460  83 F9 00		cmp ecx, 0
+ 00000463  7E 07		jle exitSound		; if there are occurances, play sound
+ 00000465  B0 07		mov al, 7
+ 00000467  E8 00000000 E	call writechar
+ 0000046C			exitSound:
+
+ 0000046C  E8 00000000 E	call crlf
+ 00000471  B8 0000000B		mov eax, lightCyan
+ 00000476  E8 00000000 E	call settextcolor
+
+ 0000047B			w2cont:
+				mwrite "Do you want to continue(y/n)?"
+ 000040B2		     1		.data				
+ 000040B2 44 6F 20 79 6F     1		??0009 BYTE "Do you want to continue(y/n)?",0		
+	   75 20 77 61 6E
+	   74 20 74 6F 20
+	   63 6F 6E 74 69
+	   6E 75 65 28 79
+	   2F 6E 29 3F 00
+ 0000047B		     1		.code
+ 0000047B  52		     1		push edx
+ 0000047C  BA 000040B2 R     1		mov  edx,OFFSET ??0009
+ 00000481  E8 00000000 E     1		call Writestring
+ 00000486  5A		     1		pop  edx
+
+				readStr input
+ 00000487  51		     1		push ecx
+ 00000488  BA 0000003C R     1		mov edx, offset input
+ 0000048D  B9 00000080	     1		mov ecx, lengthof input-1
+ 00000492  E8 00000000 E     1		call readstring
+ 00000497  59		     1		pop ecx
+ 00000498  80 3D 0000003C R	cmp input, 'y'
+	   79
+ 0000049F  75 71		jne eif
+
+ 000004A1  C7 05 00003E94 R	mov occurances, 0
+	   00000000
+
+ 000004AB  B9 00000014		mov ecx, matrixSize
+ 000004B0  8B C1		mov eax, ecx
+ 000004B2  F7 E1		mul ecx
+ 000004B4  8B C8		mov ecx, eax
+ 000004B6  BB 00000000		mov i, 0
+ 000004BB			resetColors:
+ 000004BB  C6 83 00000252 R		mov colors[i], lightGray
+	   07
+ 000004C2  43				inc i
+ 000004C3  E2 F6			loop resetColors
+ 000004C5  E8 00000000 E	call clrscr
+ 000004CA  BA 000003FB R	mov edx, offset clrScrByte
+ 000004CF  E8 00000000 E	call writestring			; make sure screen is actually cleared (sort of..)
+ 000004D4  E8 00000000 E	call clrscr
+
+ 000004D9  B8 0000000B		mov eax, lightCyan
+ 000004DE  E8 00000000 E	call settextcolor
+
+ 000004E3  E8 00000000 E	call clrscr
+ 000004E8  E8 00000000 E	call crlf
+				mwrite "	Find the Word Game"
+ 000040D0		     1		.data				
+ 000040D0 09 46 69 6E 64     1		??000A BYTE "	Find the Word Game",0		
+	   20 74 68 65 20
+	   57 6F 72 64 20
+	   47 61 6D 65 00
+ 000004ED		     1		.code
+ 000004ED  52		     1		push edx
+ 000004EE  BA 000040D0 R     1		mov  edx,OFFSET ??000A
+ 000004F3  E8 00000000 E     1		call Writestring
+ 000004F8  5A		     1		pop  edx
+ 000004F9  E8 00000000 E	call crlf
+
+ 000004FE  B8 00000007		mov eax, lightgray
+ 00000503  E8 00000000 E	call settextcolor
+
+ 00000508  E8 FFFFFAF3		call printMatrix
+
+ 0000050D  E9 FFFFFC5A		jmp prompt
+
+
+ 00000512			eif:
+ 00000512  80 3D 0000003C R	cmp input, 'n'
+	   6E
+ 00000519  0F 85 FFFFFF5C	jne w2cont
+
+ 0000051F			exitJump:
+				exit	
+ 00000526			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 6.15.8803		    12/14/16 22:17:35
+Microsoft (R) Macro Assembler Version 6.15.8803		    12/26/16 09:07:54
 Program Template     (template.asm)			     Symbols 2 - 1
 
 
+
+
+Macros:
+
+                N a m e                 Type
+
+IsDefined  . . . . . . . . . . .	Func
+NewLine  . . . . . . . . . . . .	Proc
+ShowFlag . . . . . . . . . . . .	Proc
+ShowRegister . . . . . . . . . .	Proc
+Startup  . . . . . . . . . . . .	Proc
+WriteSpace . . . . . . . . . . .	Proc
+endfor . . . . . . . . . . . . .	Proc
+mDumpMem . . . . . . . . . . . .	Proc
+mGotoxy  . . . . . . . . . . . .	Proc
+mNewLine . . . . . . . . . . . .	Proc
+mReadStr . . . . . . . . . . . .	Proc
+mWriteLn . . . . . . . . . . . .	Proc
+mWriteStr  . . . . . . . . . . .	Proc
+mWrite . . . . . . . . . . . . .	Proc
+printdec . . . . . . . . . . . .	Proc
+readstr  . . . . . . . . . . . .	Proc
 
 
 Structures and Unions:
@@ -162,8 +848,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000035F DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000AA DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000040E4 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000526 DWord	  Public  'CODE'	
 
 
 Procedures,  parameters and locals:
@@ -231,18 +917,57 @@ WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000AA Public STDCALL
-  outerloop  . . . . . . . . . .	L Near	 0000000F _TEXT	
-  start1 . . . . . . . . . . . .	L Near	 0000001A _TEXT	
-  cnt  . . . . . . . . . . . . .	L Near	 00000027 _TEXT	
-  cont1  . . . . . . . . . . . .	L Near	 0000008D _TEXT	
-  cont2  . . . . . . . . . . . .	L Near	 000000A3 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000054 _TEXT	Length= 000004D2 Public STDCALL
+  outerloop  . . . . . . . . . .	L Near	 00000092 _TEXT	
+  start1 . . . . . . . . . . . .	L Near	 0000009D _TEXT	
+  crosstest  . . . . . . . . . .	L Near	 0000011E _TEXT	
+  crosstest2 . . . . . . . . . .	L Near	 00000143 _TEXT	
+  skiptest . . . . . . . . . . .	L Near	 00000156 _TEXT	
+  prompt . . . . . . . . . . . .	L Near	 0000016C _TEXT	
+  valid1 . . . . . . . . . . . .	L Near	 000001CD _TEXT	
+  valid2 . . . . . . . . . . . .	L Near	 00000215 _TEXT	
+  lcase  . . . . . . . . . . . .	L Near	 00000225 _TEXT	
+  valid3 . . . . . . . . . . . .	L Near	 00000257 _TEXT	
+  valid4 . . . . . . . . . . . .	L Near	 0000027C _TEXT	
+  for1 . . . . . . . . . . . . .	L Near	 00000289 _TEXT	
+  for2 . . . . . . . . . . . . .	L Near	 00000294 _TEXT	
+  for3 . . . . . . . . . . . . .	L Near	 000002BF _TEXT	
+  match  . . . . . . . . . . . .	L Near	 000002D3 _TEXT	
+  for4 . . . . . . . . . . . . .	L Near	 000002E6 _TEXT	
+  noMatch1 . . . . . . . . . . .	L Near	 000002F2 _TEXT	
+  for1_3 . . . . . . . . . . . .	L Near	 0000030B _TEXT	
+  match2 . . . . . . . . . . . .	L Near	 0000031F _TEXT	
+  for1_4 . . . . . . . . . . . .	L Near	 00000332 _TEXT	
+  noMatch2 . . . . . . . . . . .	L Near	 0000033E _TEXT	
+  for2_3 . . . . . . . . . . . .	L Near	 00000377 _TEXT	
+  match3 . . . . . . . . . . . .	L Near	 0000038C _TEXT	
+  for2_4 . . . . . . . . . . . .	L Near	 000003A4 _TEXT	
+  noMatch  . . . . . . . . . . .	L Near	 000003B4 _TEXT	
+  exitSound  . . . . . . . . . .	L Near	 0000046C _TEXT	
+  w2cont . . . . . . . . . . . .	L Near	 0000047B _TEXT	
+  resetColors  . . . . . . . . .	L Near	 000004BB _TEXT	
+  eif  . . . . . . . . . . . . .	L Near	 00000512 _TEXT	
+  exitJump . . . . . . . . . . .	L Near	 0000051F _TEXT	
+printMatrix  . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000054 Public STDCALL
+  printloop  . . . . . . . . . .	L Near	 00000014 _TEXT	
+  printloop2 . . . . . . . . . .	L Near	 0000001F _TEXT	
 
 
 Symbols:
 
                 N a m e                 Type     Value    Attr
 
+??0000 . . . . . . . . . . . . .	Byte	 00003ECD _DATA	
+??0001 . . . . . . . . . . . . .	Byte	 00003EE1 _DATA	
+??0002 . . . . . . . . . . . . .	Byte	 00003F24 _DATA	
+??0003 . . . . . . . . . . . . .	Byte	 00003F44 _DATA	
+??0004 . . . . . . . . . . . . .	Byte	 00003F7D _DATA	
+??0005 . . . . . . . . . . . . .	Byte	 00003F85 _DATA	
+??0006 . . . . . . . . . . . . .	Byte	 00003FB1 _DATA	
+??0007 . . . . . . . . . . . . .	Byte	 00003FDD _DATA	
+??0008 . . . . . . . . . . . . .	Byte	 00003FF1 _DATA	
+??0009 . . . . . . . . . . . . .	Byte	 000040B2 _DATA	
+??000A . . . . . . . . . . . . .	Byte	 000040D0 _DATA	
 @CodeSize  . . . . . . . . . . .	Number	 00000000h   
 @DataSize  . . . . . . . . . . .	Number	 00000000h   
 @Interface . . . . . . . . . . .	Number	 00000003h   
@@ -295,6 +1020,7 @@ GENERIC_READ . . . . . . . . . .	Number	 -80000000h
 GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
 INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
+Linput . . . . . . . . . . . . .	DWord	 000000BD _DATA	
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
@@ -311,14 +1037,22 @@ TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-array  . . . . . . . . . . . . .	Byte	 00000029 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+clrScrByte . . . . . . . . . . .	Byte	 000003FB _DATA	
+colors . . . . . . . . . . . . .	Byte	 00000252 _DATA	
+conc2  . . . . . . . . . . . . .	Byte	 00003EA3 _DATA	
+conclusion . . . . . . . . . . .	Byte	 00003E98 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+hitafnishum  . . . . . . . . . .	Byte	 000003EF _DATA	
+input  . . . . . . . . . . . . .	Byte	 0000003C _DATA	
+i  . . . . . . . . . . . . . . .	Text   	 ebx
+j  . . . . . . . . . . . . . . .	Text   	 edi
+k  . . . . . . . . . . . . . . .	Text   	 esi
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -326,11 +1060,12 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-matrix . . . . . . . . . . . . .	Byte	 000001BA _DATA	
+matrixSize . . . . . . . . . . .	Number	 00000014h   
+matrix . . . . . . . . . . . . .	Byte	 000000C1 _DATA	
+muhsinfatih  . . . . . . . . . .	Byte	 000003E3 _DATA	
+occurances . . . . . . . . . . .	DWord	 00003E94 _DATA	
+prompt1  . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-str1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
-str2 . . . . . . . . . . . . . .	Byte	 0000000D _DATA	
-str3 . . . . . . . . . . . . . .	Byte	 00000019 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
